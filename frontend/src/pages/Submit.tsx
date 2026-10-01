@@ -25,16 +25,18 @@ export default function Submit() {
       <h1 className="text-2xl font-bold mb-6">Submit Confession</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block mb-1">Title (Optional)</label>
-          <input type="text" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} className="w-full border p-2 rounded" />
+          <label htmlFor="title" className="block mb-1 font-medium">Title (Optional)</label>
+          <input id="title" type="text" maxLength={120} value={title} onChange={e => setTitle(e.target.value)} className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none" aria-describedby="title-counter" />
+          <div id="title-counter" className="text-right text-xs text-gray-500" aria-live="polite">{120 - title.length} characters remaining</div>
         </div>
         <div>
-          <label className="block mb-1">Content (Required)</label>
-          <textarea required minLength={10} maxLength={2000} value={content} onChange={e => setContent(e.target.value)} className="w-full border p-2 rounded h-32" />
+          <label htmlFor="content" className="block mb-1 font-medium">Content (Required)</label>
+          <textarea id="content" required minLength={10} maxLength={2000} value={content} onChange={e => setContent(e.target.value)} className="w-full border p-2 rounded h-32 focus:ring-2 focus:ring-blue-500 focus:outline-none" aria-describedby="content-counter" />
+          <div id="content-counter" className="text-right text-xs text-gray-500" aria-live="polite">{2000 - content.length} characters remaining</div>
         </div>
         <div>
-          <label className="block mb-1">Category</label>
-          <select value={category} onChange={e => setCategory(e.target.value)} className="w-full border p-2 rounded">
+          <label htmlFor="category" className="block mb-1 font-medium">Category</label>
+          <select id="category" value={category} onChange={e => setCategory(e.target.value)} className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-500 focus:outline-none">
             <option value="CAMPUS_LIFE">Campus Life</option>
             <option value="ACADEMICS">Academics</option>
             <option value="RELATIONSHIPS">Relationships</option>
@@ -42,9 +44,15 @@ export default function Submit() {
             <option value="OTHER">Other</option>
           </select>
         </div>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Submit Anonymously</button>
+        <button type="submit" disabled={status === 'Submitting...'} className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none disabled:opacity-50">
+          {status === 'Submitting...' ? 'Submitting...' : 'Submit Anonymously'}
+        </button>
       </form>
-      {status && <p className="mt-4 text-center font-medium">{status}</p>}
+      {status && status !== 'Submitting...' && (
+        <div role="alert" className={`mt-4 p-3 text-center font-medium rounded ${status.startsWith('Error') ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+          {status}
+        </div>
+      )}
     </div>
   );
 }

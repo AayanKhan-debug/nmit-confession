@@ -27,10 +27,15 @@ public class ModerationController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<Page<ModerationQueueItemResponse>> getModerationQueue(
             @RequestParam(defaultValue = "PENDING") ConfessionStatus status,
+            @RequestParam(required = false) com.nmit.confessions.enums.ConfessionCategory category,
+            @RequestParam(required = false) com.nmit.confessions.enums.ScreeningFlag flag,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            @RequestParam(defaultValue = "priority") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         size = Math.min(size, 50);
-        Page<ModerationQueueItemResponse> result = moderationService.getModerationQueue(status, page, size);
+        Page<ModerationQueueItemResponse> result = moderationService.getModerationQueue(status, category, flag, from, to, sort, page, size);
         return ResponseEntity.ok(result);
     }
 

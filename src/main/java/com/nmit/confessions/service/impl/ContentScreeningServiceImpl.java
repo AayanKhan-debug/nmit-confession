@@ -11,11 +11,17 @@ import java.util.regex.Pattern;
 @Service
 public class ContentScreeningServiceImpl implements ContentScreeningService {
 
-    private static final Pattern PHONE_PATTERN = Pattern.compile("\\b\\d{10}\\b|\\b\\d{3}[-.]?\\d{3}[-.]?\\d{4}\\b");
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b");
-    private static final Pattern URL_PATTERN = Pattern.compile("(?i)\\b(https?://|www\\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]");
+    // Improved Obfuscation-Aware Patterns
     
-    // Simplistic word lists for phase 1
+    // Allows for spaces, dots, dashes, and parentheses between digits
+    private static final Pattern PHONE_PATTERN = Pattern.compile("(?i)(\\+?\\d[\\s\\-._]*){10,}");
+    
+    // Allows for (at) or [at] and spaces around dots
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("(?i)\\b[A-Za-z0-9._%+\\-]+(?:\\s*@\\s*|\\s*\\(?at\\)?\\s*|\\[at\\])[A-Za-z0-9.\\-]+\\s*\\.\\s*[A-Za-z]{2,}\\b");
+    
+    // Obfuscated domains or urls, but requires some context to prevent matching email domains directly, like requiring http or www
+    private static final Pattern URL_PATTERN = Pattern.compile("(?i)(?:https?://|www\\.)[-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]");
+    
     private static final String[] PROFANITY_WORDS = {"fuck", "shit", "bitch", "asshole", "cunt"};
     private static final String[] HARASSMENT_WORDS = {"kill yourself", "die", "ugly", "loser", "hate you"};
     private static final String[] SENSITIVE_WORDS = {"suicide", "cut myself", "depressed", "want to die", "self harm"};
@@ -23,36 +29,51 @@ public class ContentScreeningServiceImpl implements ContentScreeningService {
     @Override
     public Set<ScreeningFlag> screenContent(String content) {
         Set<ScreeningFlag> flags = new HashSet<>();
-        if (content == null || content.isEmpty()) {
+        if (content == null || content.trim().isEmpty()) {
             return flags;
         }
 
+        // 1. Basic lowercasing
         String lowerContent = content.toLowerCase();
+        
+        // 3. Normalized punctuation version (removes special chars to prevent bypassing word filters like f.u.c.k)
+        String noPunctuationContent = lowerContent.replaceAll("[^a-z0-9\\s]", " ");
 
-        if (PHONE_PATTERN.matcher(content).find() || EMAIL_PATTERN.matcher(content).find()) {
+        // 2. Whitespace-stripped normalized version from noPunctuationContent
+        String noSpaceContent = noPunctuationContent.replaceAll("\\s+", "");
+
+        String noSpaceWithPunctuation = lowerContent.replaceAll("\\s+", "");
+
+        // Check Contact Info using slightly normalized text for spacing obfuscation
+        if (PHONE_PATTERN.matcher(content).find() || PHONE_PATTERN.matcher(noSpaceWithPunctuation).find() || EMAIL_PATTERN.matcher(content).find() || EMAIL_PATTERN.matcher(noSpaceWithPunctuation).find()) {
             flags.add(ScreeningFlag.PERSONAL_INFORMATION);
         }
 
-        if (URL_PATTERN.matcher(content).find()) {
+        // Check URLs against noSpaceContent as well to catch obfuscated links
+        if (URL_PATTERN.matcher(content).find() || URL_PATTERN.matcher(noSpaceWithPunctuation).find()) {
             flags.add(ScreeningFlag.SUSPICIOUS_LINK);
         }
 
+        // Check Word Lists against normalized strings
         for (String word : PROFANITY_WORDS) {
-            if (lowerContent.contains(word)) {
+            String wordNoSpace = word.replaceAll("\\s+", "");
+            if (lowerContent.contains(word) || noPunctuationContent.contains(word) || (wordNoSpace.length() > 3 && noSpaceContent.contains(wordNoSpace))) {
                 flags.add(ScreeningFlag.PROFANITY);
                 break;
             }
         }
 
         for (String word : HARASSMENT_WORDS) {
-            if (lowerContent.contains(word)) {
+            String wordNoSpace = word.replaceAll("\\s+", "");
+            if (lowerContent.contains(word) || noPunctuationContent.contains(word) || (wordNoSpace.length() > 5 && noSpaceContent.contains(wordNoSpace))) {
                 flags.add(ScreeningFlag.HARASSMENT);
                 break;
             }
         }
 
         for (String word : SENSITIVE_WORDS) {
-            if (lowerContent.contains(word)) {
+            String wordNoSpace = word.replaceAll("\\s+", "");
+            if (lowerContent.contains(word) || noPunctuationContent.contains(word) || (wordNoSpace.length() > 5 && noSpaceContent.contains(wordNoSpace))) {
                 flags.add(ScreeningFlag.SENSITIVE_CONTENT);
                 break;
             }

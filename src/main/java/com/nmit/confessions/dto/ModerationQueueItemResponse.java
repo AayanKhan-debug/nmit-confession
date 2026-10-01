@@ -13,7 +13,9 @@ public class ModerationQueueItemResponse {
     private ConfessionCategory category;
     private ConfessionStatus status;
     private Set<ScreeningFlag> screeningFlags;
+    private java.util.Map<ScreeningFlag, String> flagExplanations;
     private Instant createdAt;
+    private int reportCount;
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -34,6 +36,12 @@ public class ModerationQueueItemResponse {
     public Set<ScreeningFlag> getScreeningFlags() { return screeningFlags; }
     public void setScreeningFlags(Set<ScreeningFlag> screeningFlags) { this.screeningFlags = screeningFlags; }
 
+    public java.util.Map<ScreeningFlag, String> getFlagExplanations() { return flagExplanations; }
+    public void setFlagExplanations(java.util.Map<ScreeningFlag, String> flagExplanations) { this.flagExplanations = flagExplanations; }
+
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    public int getReportCount() { return reportCount; }
+    public void setReportCount(int reportCount) { this.reportCount = reportCount; }
 }

@@ -37,8 +37,12 @@ class TransactionTest {
     private Admin moderator;
     private Confession pendingConfession;
 
+    @Autowired
+    private com.nmit.confessions.repository.ReportRepository reportRepository;
+
     @BeforeEach
     void setUp() {
+        reportRepository.deleteAll();
         confessionRepository.deleteAll();
         adminRepository.deleteAll();
 
@@ -69,4 +73,5 @@ class TransactionTest {
         assertThat(saved.getStatus()).isEqualTo(ConfessionStatus.PENDING);
         assertThat(saved.getModeratedBy()).isNull();
     }
+
 }

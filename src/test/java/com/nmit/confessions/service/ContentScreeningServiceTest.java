@@ -69,4 +69,34 @@ class ContentScreeningServiceTest {
                 ScreeningFlag.PERSONAL_INFORMATION
         );
     }
+
+    @Test
+    void testObfuscatedEmailDetection() {
+        Set<ScreeningFlag> flags = screeningService.screenContent("Contact me at test @ example . com for info.");
+        assertThat(flags).contains(ScreeningFlag.PERSONAL_INFORMATION);
+        
+        Set<ScreeningFlag> flags2 = screeningService.screenContent("Reach me at hello(at)gmail.com");
+        assertThat(flags2).contains(ScreeningFlag.PERSONAL_INFORMATION);
+    }
+
+    @Test
+    void testObfuscatedPhoneNumberDetection() {
+        Set<ScreeningFlag> flags = screeningService.screenContent("Call me 9 8 7 6 5 4 3 2 1 0 if you agree.");
+        assertThat(flags).contains(ScreeningFlag.PERSONAL_INFORMATION);
+    }
+
+    @Test
+    void testObfuscatedUrlDetection() {
+        Set<ScreeningFlag> flags = screeningService.screenContent("Check out h t t p : / / google . com for this.");
+        assertThat(flags).contains(ScreeningFlag.SUSPICIOUS_LINK);
+    }
+
+    @Test
+    void testObfuscatedProfanityDetection() {
+        Set<ScreeningFlag> flags = screeningService.screenContent("What the f u c k is this.");
+        assertThat(flags).contains(ScreeningFlag.PROFANITY);
+        
+        Set<ScreeningFlag> flags2 = screeningService.screenContent("This is f.u.c.k.");
+        assertThat(flags2).contains(ScreeningFlag.PROFANITY);
+    }
 }

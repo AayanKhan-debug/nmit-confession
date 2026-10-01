@@ -49,7 +49,7 @@ public class Confession {
 
     private Instant publishedAt;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = ScreeningFlag.class)
     @CollectionTable(name = "confession_screening_flags", joinColumns = @JoinColumn(name = "confession_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "flag")

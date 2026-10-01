@@ -1,0 +1,30 @@
+# Maven
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Environment Variables
+.env
+.env.local
+.env.production
+.env.development
+application-local.properties
+application-local.yml
+application-prod.properties
+application-prod.yml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/coverage/
+
+# OS
+.DS_Store
+Thumbs.db

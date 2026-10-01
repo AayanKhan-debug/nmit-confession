@@ -88,11 +88,11 @@ export default function Home() {
               <span>{new Date(c.createdAt).toLocaleString()}</span>
             </div>
             <div className="flex space-x-4 border-t pt-4">
-              <button onClick={() => handleReaction(c.id, 'LOVE')} className="flex items-center space-x-1 hover:text-red-500"><Heart size={16} /><span>{c.reactionLoveCount}</span></button>
-              <button onClick={() => handleReaction(c.id, 'FUNNY')} className="flex items-center space-x-1 hover:text-yellow-500"><Smile size={16} /><span>{c.reactionFunnyCount}</span></button>
-              <button onClick={() => handleReaction(c.id, 'SAD')} className="flex items-center space-x-1 hover:text-blue-500"><Frown size={16} /><span>{c.reactionSadCount}</span></button>
-              <button onClick={() => handleReaction(c.id, 'FIRE')} className="flex items-center space-x-1 hover:text-orange-500"><Flame size={16} /><span>{c.reactionFireCount}</span></button>
-              <button onClick={() => handleReport(c.id)} className="flex items-center space-x-1 text-red-400 hover:text-red-600 ml-auto"><AlertTriangle size={16} /><span>Report</span></button>
+              <button onClick={() => handleReaction(c.id, 'LOVE')} aria-label="React with Love" className="flex items-center space-x-1 hover:text-red-500"><Heart size={16} aria-hidden="true" /><span>{c.reactionLoveCount}</span></button>
+              <button onClick={() => handleReaction(c.id, 'FUNNY')} aria-label="React with Funny" className="flex items-center space-x-1 hover:text-yellow-500"><Smile size={16} aria-hidden="true" /><span>{c.reactionFunnyCount}</span></button>
+              <button onClick={() => handleReaction(c.id, 'SAD')} aria-label="React with Sad" className="flex items-center space-x-1 hover:text-blue-500"><Frown size={16} aria-hidden="true" /><span>{c.reactionSadCount}</span></button>
+              <button onClick={() => handleReaction(c.id, 'FIRE')} aria-label="React with Fire" className="flex items-center space-x-1 hover:text-orange-500"><Flame size={16} aria-hidden="true" /><span>{c.reactionFireCount}</span></button>
+              <button onClick={() => handleReport(c.id)} aria-label="Report Confession" className="flex items-center space-x-1 text-red-400 hover:text-red-600 ml-auto"><AlertTriangle size={16} aria-hidden="true" /><span>Report</span></button>
             </div>
           </div>
         ))}
@@ -106,3 +106,4 @@ export default function Home() {
     </div>
   );
 }
+
