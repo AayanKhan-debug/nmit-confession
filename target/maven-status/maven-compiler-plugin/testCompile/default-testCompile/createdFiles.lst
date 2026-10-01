@@ -1,0 +1,16 @@
+com\nmit\confessions\service\RateLimitServiceTest.class
+com\nmit\confessions\controller\ModerationActionTest.class
+com\nmit\confessions\controller\ModerationQueueTest.class
+com\nmit\confessions\controller\AuditLogTest.class
+com\nmit\confessions\service\ConfessionServiceTest.class
+com\nmit\confessions\controller\ReportActionTest.class
+com\nmit\confessions\repository\AdminRepositoryTest.class
+com\nmit\confessions\controller\ReactionActionTest.class
+com\nmit\confessions\service\TransactionTest.class
+com\nmit\confessions\security\AuthControllerTest.class
+com\nmit\confessions\service\ContentScreeningServiceTest.class
+com\nmit\confessions\controller\PublicConfessionFeedTest.class
+com\nmit\confessions\service\DuplicateDetectionServiceTest.class
+com\nmit\confessions\ConfessionIntegrationTest.class
+com\nmit\confessions\NmitConfessionsApplicationTests.class
+com\nmit\confessions\controller\ModerationHiddenTest.class

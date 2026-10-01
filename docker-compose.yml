@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: nmit_confessions_db
+    environment:
+      POSTGRES_DB: confessions
+      POSTGRES_USER: confessions_user
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:

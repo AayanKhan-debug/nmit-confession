@@ -1,0 +1,16 @@
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\ConfessionIntegrationTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\AuditLogTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\ModerationActionTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\ModerationHiddenTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\ModerationQueueTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\PublicConfessionFeedTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\ReactionActionTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\controller\ReportActionTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\NmitConfessionsApplicationTests.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\repository\AdminRepositoryTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\security\AuthControllerTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\service\ConfessionServiceTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\service\ContentScreeningServiceTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\service\DuplicateDetectionServiceTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\service\RateLimitServiceTest.java
+C:\Users\Aayan Khan\Desktop\NMIT Confession\src\test\java\com\nmit\confessions\service\TransactionTest.java
