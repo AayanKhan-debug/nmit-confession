@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReactionRepository extends JpaRepository<Reaction, Long> {
+    boolean existsByConfessionIdAndVoterTokenHash(Long confessionId, String voterTokenHash);
 }

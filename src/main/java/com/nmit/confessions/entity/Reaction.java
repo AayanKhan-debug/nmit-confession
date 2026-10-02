@@ -6,7 +6,7 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "reactions", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"confession_id", "voter_token_hash", "reaction_type"})
+    @UniqueConstraint(name = "uk_reactions_confession_voter", columnNames = {"confession_id", "voter_token_hash"})
 })
 public class Reaction {
 

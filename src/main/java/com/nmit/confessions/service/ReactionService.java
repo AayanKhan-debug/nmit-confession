@@ -44,6 +44,11 @@ public class ReactionService {
 
         String tokenHash = deviceTokenService.hashToken(rawToken);
 
+        // Reject if this device has already reacted to this confession (any reaction type)
+        if (reactionRepository.existsByConfessionIdAndVoterTokenHash(confessionId, tokenHash)) {
+            throw new DuplicateReactionException("Reaction already added by this device.");
+        }
+
         Reaction reaction = new Reaction();
         reaction.setConfession(confession);
         reaction.setReactionType(type);
