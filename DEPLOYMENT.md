@@ -34,6 +34,8 @@ Provide the following environment variables (defined in `.env.example`). Do NOT 
 - `APP_DISCOVERY_TIMEZONE`
 - `CORS_ALLOWED_ORIGINS`
 - `PORT`
+- `ADMIN_INITIAL_USERNAME`
+- `ADMIN_INITIAL_PASSWORD`
 
 ## 4. Local PostgreSQL
 
