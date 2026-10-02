@@ -17,31 +17,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
+@Transactional(readOnly = true)
 public class AdminDashboardService {
-    
+
     private final ConfessionRepository confessionRepository;
     private final ReportRepository reportRepository;
     private final AuditLogRepository auditLogRepository;
-    
+
     public AdminDashboardService(ConfessionRepository confessionRepository, ReportRepository reportRepository, AuditLogRepository auditLogRepository) {
         this.confessionRepository = confessionRepository;
         this.reportRepository = reportRepository;
         this.auditLogRepository = auditLogRepository;
     }
-    
+
     public AdminDashboardResponse getDashboardMetrics() {
         AdminDashboardResponse response = new AdminDashboardResponse();
-        
+
         response.setPendingConfessions(confessionRepository.countByStatus(ConfessionStatus.PENDING));
         response.setHiddenConfessions(confessionRepository.countByStatus(ConfessionStatus.HIDDEN));
         response.setPublishedConfessions(confessionRepository.countByStatus(ConfessionStatus.PUBLISHED));
         response.setRejectedConfessions(confessionRepository.countByStatus(ConfessionStatus.REJECTED));
-        
+
         response.setFlaggedPendingConfessions(confessionRepository.countByStatusAndScreeningFlagsIsNotEmpty(ConfessionStatus.PENDING));
-        
+
         response.setPendingReports(reportRepository.countByStatus(ReportStatus.PENDING));
-        
+
         // Aggregate flag counts
         List<Object[]> flagResults = confessionRepository.countScreeningFlagsByStatus(ConfessionStatus.PENDING);
         Map<String, Long> flagCounts = new HashMap<>();
@@ -51,7 +54,7 @@ public class AdminDashboardService {
             flagCounts.put(flag.name(), count);
         }
         response.setFlagCounts(flagCounts);
-        
+
         // Aggregate category counts
         List<Object[]> categoryResults = confessionRepository.countByCategoryAndStatus(ConfessionStatus.PENDING);
         Map<String, Long> categoryCounts = new HashMap<>();
@@ -61,7 +64,7 @@ public class AdminDashboardService {
             categoryCounts.put(category.name(), count);
         }
         response.setCategoryCounts(categoryCounts);
-        
+
         // Recent activity
         List<AuditLog> recentLogs = auditLogRepository.findTop10ByOrderByCreatedAtDescIdDesc();
         List<AuditActivityResponse> recentActivity = recentLogs.stream().map(log -> {
@@ -77,9 +80,9 @@ public class AdminDashboardService {
             }
             return act;
         }).collect(Collectors.toList());
-        
+
         response.setRecentActivity(recentActivity);
-        
+
         return response;
     }
 }

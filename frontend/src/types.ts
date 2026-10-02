@@ -1,3 +1,7 @@
+export interface User {
+  username: string;
+  role: 'ADMIN' | 'MODERATOR';
+}
 
 export interface Confession {
   id: number;

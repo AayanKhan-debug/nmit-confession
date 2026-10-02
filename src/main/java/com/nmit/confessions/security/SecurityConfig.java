@@ -41,10 +41,23 @@ public class SecurityConfig {
                 .xssProtection(xss -> xss.disable())
                 .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"))
             )
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout", "/api/confessions", "/api/confessions/**", "/api/confessions/*/reports")
-            )
+            .csrf(csrf -> {
+                org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler requestHandler = new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler();
+                requestHandler.setCsrfRequestAttributeName(null);
+                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                    .csrfTokenRequestHandler(requestHandler)
+                    .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout", "/api/confessions", "/api/confessions/**", "/api/confessions/*/reports");
+            })
+            .addFilterAfter(new org.springframework.web.filter.OncePerRequestFilter() {
+                @Override
+                protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, java.io.IOException {
+                    org.springframework.security.web.csrf.CsrfToken csrfToken = (org.springframework.security.web.csrf.CsrfToken) request.getAttribute(org.springframework.security.web.csrf.CsrfToken.class.getName());
+                    if (csrfToken != null) {
+                        csrfToken.getToken();
+                    }
+                    filterChain.doFilter(request, response);
+                }
+            }, org.springframework.security.web.authentication.www.BasicAuthenticationFilter.class)
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/auth/logout").permitAll()
@@ -58,7 +71,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionFixation().migrateSession()
             )
-            .logout(logout -> logout.disable()); 
+            .logout(logout -> logout.disable());
 
         return http.build();
     }
