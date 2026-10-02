@@ -34,7 +34,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {label && (
             <label
               htmlFor={textareaId}
-              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300"
+              className="block text-xs font-bold uppercase tracking-wider text-slate-300"
             >
               {label}
             </label>
@@ -43,8 +43,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             <span
               className={`text-xs font-mono ${
                 charCount > maxCharCount
-                  ? 'text-rose-600 dark:text-rose-400 font-bold'
-                  : 'text-slate-400 dark:text-slate-500'
+                  ? 'text-rose-400 font-bold'
+                  : 'text-slate-500'
               }`}
             >
               {charCount} / {maxCharCount}
@@ -57,25 +57,25 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           disabled={disabled}
           aria-invalid={!!error}
           aria-describedby={error ? errorId : helperText ? helperId : undefined}
-          className={`w-full rounded-2xl p-4 text-sm leading-relaxed transition-all duration-150 resize-y min-h-[120px]
-            bg-white dark:bg-slate-900/90 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500
+          className={`w-full rounded-[20px] p-4 text-sm leading-relaxed transition-all duration-150 resize-y min-h-[140px]
+            bg-[#111827]/90 text-slate-100 placeholder-slate-500
             border ${
               error
-                ? 'border-rose-400 dark:border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/20'
-                : 'border-slate-300 dark:border-white/10 hover:border-slate-400 dark:hover:border-white/20 focus:border-violet-500 dark:focus:border-violet-400'
+                ? 'border-rose-500/80 focus:border-rose-500 focus:ring-rose-500/30'
+                : 'border-white/10 hover:border-white/20 focus:border-violet-500'
             }
-            focus:outline-none focus:ring-2 focus:ring-violet-500/20 dark:focus:ring-violet-500/30
+            focus:outline-none focus:ring-2 focus:ring-violet-400/40 focus:ring-offset-2 focus:ring-offset-[#0B0F19]
             disabled:opacity-50 disabled:cursor-not-allowed
             ${className}
           `}
           {...props}
         />
         {error ? (
-          <p id={errorId} role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-400">
+          <p id={errorId} role="alert" className="text-xs font-semibold text-rose-400">
             {error}
           </p>
         ) : helperText ? (
-          <p id={helperId} className="text-xs text-slate-500 dark:text-slate-400">
+          <p id={helperId} className="text-xs text-slate-400">
             {helperText}
           </p>
         ) : null}
@@ -85,3 +85,5 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 );
 
 Textarea.displayName = 'Textarea';
+
+export default Textarea;

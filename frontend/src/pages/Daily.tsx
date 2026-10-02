@@ -9,29 +9,24 @@ import {
   Frown,
   Flame,
   Clock,
-  Sun
+  Sun,
+  Shield,
+  Share2,
+  Check
 } from 'lucide-react';
 import {
-  Badge,
   SkeletonCard,
   EmptyState,
-  ErrorState
+  ErrorState,
+  Button
 } from '../components/ui';
-
-
-const CATEGORY_BADGE_VARIANTS: Record<string, { variant: 'violet' | 'pink' | 'blue' | 'success' | 'warning' | 'default'; label: string; emoji: string }> = {
-  CAMPUS_LIFE: { variant: 'blue', label: 'Campus Life', emoji: '🏫' },
-  ADVICE: { variant: 'success', label: 'Advice', emoji: '💡' },
-  RANT: { variant: 'pink', label: 'Rant', emoji: '🗣️' },
-  FUNNY: { variant: 'warning', label: 'Funny', emoji: '😂' },
-  CRUSH: { variant: 'pink', label: 'Crush', emoji: '💖' },
-  OTHER: { variant: 'default', label: 'Other', emoji: '🔮' },
-};
+import { getCategoryTheme } from '../utils/categoryTheme';
 
 export default function Daily() {
   const [confession, setConfession] = useState<Confession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     executeLoad();
@@ -65,6 +60,20 @@ export default function Daily() {
     };
   };
 
+  const handleShare = async () => {
+    if (!confession) return;
+    try {
+      const shareUrl = `${window.location.origin}/daily`;
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch {
+      // Fallback
+    }
+  };
+
   const todayFormatted = new Date().toLocaleDateString(undefined, {
     weekday: 'long',
     year: 'numeric',
@@ -75,38 +84,37 @@ export default function Daily() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Header Banner */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/10 via-violet-500/5 to-transparent rounded-bl-full pointer-events-none -mr-10 -mt-10" />
+      <section className="rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        {/* Subtle background glow blobs */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-amber-500/20 via-violet-500/10 to-transparent rounded-full blur-2xl pointer-events-none -mr-12 -mt-12" />
 
         <div className="relative z-10 space-y-2">
-          <Badge variant="warning" dot size="sm">
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
-              <span>Daily Selection</span>
-            </span>
-          </Badge>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold tracking-wide uppercase select-none shadow-sm">
+            <Calendar className="w-3.5 h-3.5 text-amber-400" />
+            <span>Featured Spotlight</span>
+          </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-primary)]">
-            Today's Confession
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-heading">
+            Confession of the Day
           </h1>
 
-          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-[var(--text-secondary)]">
-            <div className="flex items-center gap-1 font-semibold text-[var(--text-primary)]">
-              <Clock className="w-3.5 h-3.5 text-amber-500" />
+          <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-300 font-medium">
+            <div className="flex items-center gap-1.5 text-white font-semibold">
+              <Clock className="w-3.5 h-3.5 text-amber-400" />
               <span>{todayFormatted}</span>
             </div>
             <span>•</span>
-            <span className="text-[var(--text-muted)]">
-              Selected deterministically for today's date
+            <span className="text-slate-400">
+              Selected deterministically for today's campus edition
             </span>
           </div>
         </div>
       </section>
 
-      {/* Content Area */}
+      {/* Featured Card Area */}
       <div>
         {loading ? (
-          <SkeletonCard className="p-8 sm:p-10 border-amber-500/30" />
+          <SkeletonCard className="p-8 sm:p-10 border-amber-500/40 shadow-amber-500/10" />
         ) : error ? (
           <ErrorState
             title="Failed to load daily feature"
@@ -115,74 +123,90 @@ export default function Daily() {
           />
         ) : !confession ? (
           <EmptyState
-            icon={<Sun className="w-8 h-8 text-amber-500" />}
-            title="Today's slot is still empty"
-            description="Today's featured confession is selected deterministically for this date. Check back once confessions are published today!"
+            icon={<Sun className="w-8 h-8 text-amber-400" />}
+            title="Today's slot is still open"
+            description="Today's featured confession is chosen deterministically from approved stories. Check back once confessions are published today!"
             actionLabel="Post a Confession"
             onAction={() => { window.location.href = '/submit'; }}
           />
         ) : (
           (() => {
-            const badgeMeta = CATEGORY_BADGE_VARIANTS[confession.category] || CATEGORY_BADGE_VARIANTS.OTHER;
+            const theme = getCategoryTheme(confession.category);
             const rx = getReactions(confession);
 
             return (
-              <article className="relative rounded-3xl bg-[var(--bg-surface)] border-2 border-amber-500/30 p-7 sm:p-10 shadow-lg shadow-amber-500/5 overflow-hidden">
-                {/* Spotlight ribbon */}
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-500 to-amber-600 text-white text-[11px] font-extrabold px-4 py-1.5 rounded-bl-2xl shadow-sm flex items-center gap-1.5 uppercase tracking-wider">
-                  <Sparkles className="w-3 h-3 fill-white/30" />
-                  <span>Spotlight</span>
+              <article className="relative rounded-[24px] bg-gradient-to-b from-[#151d30] to-[#101726] border-2 border-amber-400/40 p-7 sm:p-10 shadow-2xl shadow-amber-500/10 overflow-hidden">
+                {/* Spotlight Ambient Glow */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-amber-500/15 via-pink-500/10 to-transparent rounded-full blur-3xl pointer-events-none -mr-16 -mt-16" />
+
+                {/* Spotlight Ribbon Banner */}
+                <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-500 via-amber-600 to-orange-600 text-white text-[11px] font-black px-4.5 py-1.5 rounded-bl-2xl shadow-md flex items-center gap-1.5 uppercase tracking-wider border-b border-l border-amber-300/30">
+                  <Sparkles className="w-3.5 h-3.5 fill-white/40" />
+                  <span>Campus Spotlight</span>
                 </div>
 
-                {/* Card Top: Category and Post Date */}
-                <div className="flex items-center gap-2.5 mb-5">
-                  <Badge variant={badgeMeta.variant} size="md">
-                    <span className="mr-1">{badgeMeta.emoji}</span>
-                    <span>{badgeMeta.label}</span>
-                  </Badge>
+                {/* Card Top: Category Sticker & Anonymous Tag */}
+                <div className="flex flex-wrap items-center gap-2.5 mb-5 relative z-10">
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border tracking-wide select-none ${theme.badgeClass}`}
+                  >
+                    <span role="img" aria-hidden="true">{theme.emoji}</span>
+                    <span>{theme.label}</span>
+                  </span>
 
-                  <span className="text-xs text-[var(--text-muted)]">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-white/5 text-slate-400 border border-white/5 select-none">
+                    <Shield className="w-3 h-3 text-amber-400 shrink-0" />
+                    <span>Anonymous Story</span>
+                  </span>
+
+                  <span className="text-xs text-slate-400 ml-1">
                     Posted on {new Date(confession.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                   </span>
                 </div>
 
                 {/* Confession Title */}
                 {confession.title && (
-                  <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-[var(--text-primary)] mb-3 leading-snug">
+                  <h2 className="text-xl sm:text-3xl font-black tracking-tight text-white mb-4 leading-snug font-heading relative z-10">
                     {confession.title}
                   </h2>
                 )}
 
                 {/* Confession Body */}
-                <p className="text-[var(--text-secondary)] whitespace-pre-wrap text-base sm:text-lg leading-relaxed mb-8">
+                <p className="text-slate-100 whitespace-pre-wrap text-base sm:text-lg leading-relaxed mb-8 relative z-10 break-words">
                   {confession.content}
                 </p>
 
-                {/* Reactions Footnote & Deterministic Disclaimer */}
-                <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-[var(--border-subtle)]">
-                  {/* Reaction counts */}
-                  <div className="flex items-center gap-3 text-xs sm:text-sm font-semibold text-[var(--text-secondary)]">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-rose-500/10 text-rose-500 border border-rose-500/20">
-                      <Heart className="w-3.5 h-3.5" />
+                {/* Reactions Footnote & Actions */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-5 border-t border-white/10 relative z-10">
+                  {/* Reaction Summary Pills */}
+                  <div className="flex items-center gap-2 text-xs sm:text-sm font-bold">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30 select-none">
+                      <Heart className="w-3.5 h-3.5 fill-rose-500/30 text-rose-400" />
                       <span>{rx.love}</span>
                     </span>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                      <Smile className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 select-none">
+                      <Smile className="w-3.5 h-3.5 fill-amber-500/30 text-amber-400" />
                       <span>{rx.funny}</span>
                     </span>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-sky-500/10 text-sky-500 border border-sky-500/20">
-                      <Frown className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 select-none">
+                      <Frown className="w-3.5 h-3.5 fill-cyan-500/30 text-cyan-400" />
                       <span>{rx.sad}</span>
                     </span>
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-orange-500/10 text-orange-500 border border-orange-500/20">
-                      <Flame className="w-3.5 h-3.5" />
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-500/15 text-orange-300 border border-orange-500/30 select-none">
+                      <Flame className="w-3.5 h-3.5 fill-orange-500/30 text-orange-400" />
                       <span>{rx.fire}</span>
                     </span>
                   </div>
 
-                  <p className="text-[11px] text-[var(--text-muted)] italic">
-                    Selected deterministically for today's date.
-                  </p>
+                  {/* Share button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleShare}
+                    leftIcon={copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Share2 className="w-3.5 h-3.5 text-amber-400" />}
+                  >
+                    {copied ? 'Link Copied!' : 'Share Today\'s Feature'}
+                  </Button>
                 </div>
               </article>
             );

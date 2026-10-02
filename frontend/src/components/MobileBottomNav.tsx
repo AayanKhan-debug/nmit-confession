@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 
 export const MobileBottomNav = () => {
-
   const location = useLocation();
   const isSubmitPage = location.pathname === '/submit';
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -23,7 +22,7 @@ export const MobileBottomNav = () => {
           <Link
             to="/submit"
             aria-label="Post an anonymous confession"
-            className="flex items-center gap-2 px-4 py-3 min-h-[48px] rounded-full bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold text-xs shadow-lg shadow-violet-600/30 hover:shadow-violet-600/50 active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2"
+            className="flex items-center gap-2 px-5 py-3 min-h-[48px] rounded-full bg-gradient-to-r from-violet-600 via-pink-600 to-indigo-600 text-white font-extrabold text-xs shadow-lg shadow-violet-600/40 hover:shadow-violet-600/60 active:scale-95 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 border border-white/25"
           >
             <MessageSquarePlus className="w-5 h-5" />
             <span className="tracking-wide">Confess</span>
@@ -34,7 +33,7 @@ export const MobileBottomNav = () => {
       {/* Fixed Bottom Tab Bar */}
       <nav
         aria-label="Bottom Navigation Bar"
-        className="fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-surface)]/95 backdrop-blur-md border-t border-[var(--border-subtle)] pb-[env(safe-area-inset-bottom)] shadow-lg"
+        className="fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/90 backdrop-blur-xl border-t border-white/10 pb-[env(safe-area-inset-bottom)] shadow-2xl"
       >
         <div className="flex items-center justify-around h-16 max-w-md mx-auto px-2">
           {/* Feed */}
@@ -42,10 +41,10 @@ export const MobileBottomNav = () => {
             to="/"
             end
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-xl py-1 text-[10px] font-medium transition-colors ${
+              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-2xl py-1 text-[10px] font-semibold transition-all ${
                 isActive
-                  ? 'text-violet-600 dark:text-violet-400 font-bold'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  ? 'text-violet-400 font-bold scale-105'
+                  : 'text-slate-400 hover:text-slate-200'
               }`
             }
           >
@@ -57,10 +56,10 @@ export const MobileBottomNav = () => {
           <NavLink
             to="/daily"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-xl py-1 text-[10px] font-medium transition-colors ${
+              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-2xl py-1 text-[10px] font-semibold transition-all ${
                 isActive
-                  ? 'text-violet-600 dark:text-violet-400 font-bold'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  ? 'text-amber-400 font-bold scale-105'
+                  : 'text-slate-400 hover:text-slate-200'
               }`
             }
           >
@@ -72,10 +71,10 @@ export const MobileBottomNav = () => {
           <NavLink
             to="/trending"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-xl py-1 text-[10px] font-medium transition-colors ${
+              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-2xl py-1 text-[10px] font-semibold transition-all ${
                 isActive
-                  ? 'text-pink-600 dark:text-pink-400 font-bold'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  ? 'text-pink-400 font-bold scale-105'
+                  : 'text-slate-400 hover:text-slate-200'
               }`
             }
           >
@@ -87,10 +86,10 @@ export const MobileBottomNav = () => {
           <NavLink
             to="/search"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-xl py-1 text-[10px] font-medium transition-colors ${
+              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-2xl py-1 text-[10px] font-semibold transition-all ${
                 isActive
-                  ? 'text-violet-600 dark:text-violet-400 font-bold'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  ? 'text-cyan-400 font-bold scale-105'
+                  : 'text-slate-400 hover:text-slate-200'
               }`
             }
           >
@@ -102,10 +101,10 @@ export const MobileBottomNav = () => {
           <NavLink
             to="/archives"
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-xl py-1 text-[10px] font-medium transition-colors ${
+              `flex flex-col items-center justify-center min-w-[56px] min-h-[44px] rounded-2xl py-1 text-[10px] font-semibold transition-all ${
                 isActive
-                  ? 'text-violet-600 dark:text-violet-400 font-bold'
-                  : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                  ? 'text-purple-400 font-bold scale-105'
+                  : 'text-slate-400 hover:text-slate-200'
               }`
             }
           >

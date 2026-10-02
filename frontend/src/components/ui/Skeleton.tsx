@@ -22,7 +22,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
       aria-hidden="true"
       className={twMerge(
         clsx(
-          'animate-shimmer bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)]',
+          'animate-shimmer bg-white/5 border border-white/5',
           variantStyles[variant],
           className
         )
@@ -56,22 +56,22 @@ export const SkeletonCard: React.FC<{ className?: string }> = ({ className }) =>
     <div
       aria-hidden="true"
       className={twMerge(
-        'p-6 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] space-y-4 shadow-sm',
+        'p-6 sm:p-7 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 space-y-4 shadow-xl shadow-black/40',
         className
       )}
     >
       <div className="flex items-center justify-between">
-        <Skeleton className="h-6 w-24 rounded-full" />
-        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-6 w-28 rounded-full" />
+        <Skeleton className="h-4 w-20" />
       </div>
-      <Skeleton className="h-5 w-3/4" />
+      <Skeleton className="h-5 w-3/4 rounded-xl" />
       <SkeletonText lines={3} />
-      <div className="pt-2 flex items-center justify-between border-t border-[var(--border-subtle)]">
+      <div className="pt-3 flex items-center justify-between border-t border-white/10">
         <div className="flex gap-2">
-          <Skeleton className="h-8 w-14 rounded-full" />
-          <Skeleton className="h-8 w-14 rounded-full" />
+          <Skeleton className="h-10 w-16 rounded-full" />
+          <Skeleton className="h-10 w-16 rounded-full" />
         </div>
-        <Skeleton className="h-8 w-8 rounded-full" />
+        <Skeleton className="h-10 w-10 rounded-full" />
       </div>
     </div>
   );

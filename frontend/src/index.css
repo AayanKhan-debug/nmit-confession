@@ -3,18 +3,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ==========================================================================
-   NMIT CONFESSIONS DESIGN TOKENS
-   Direction: Dark-mode first, Gen-Z expressive yet product-polished.
-   Palette: Midnight obsidian background, elevated slate surfaces,
-            vibrant violet / pink / blue gradient accents, tasteful glow.
+   NMIT CONFESSIONS — DARK NEON "STICKER" CAMPUS DESIGN SYSTEM
+   Art Direction: Dark Neon "Sticker" Campus Style
+   Base: #0B0F19
+   Accents: Electric Violet (#8B5CF6), Hot Pink (#EC4899), Neon Cyan (#06B6D4)
+   Headings: Space Grotesk
+   Body: Inter
+   Cards: 24px radius, subtle gradient borders, dark glass panels, controlled glow
    ========================================================================== */
 
 :root {
-  /* Color Palette - Light Mode */
+  /* Color Palette - Light Mode Fallback */
   --bg-page: #F8FAFC;
   --bg-surface: #FFFFFF;
   --bg-surface-elevated: #F1F5F9;
-  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(255, 255, 255, 0.88);
 
   --border-subtle: rgba(15, 23, 42, 0.08);
   --border-strong: rgba(15, 23, 42, 0.16);
@@ -28,9 +31,10 @@
   /* Brand Accents */
   --accent-violet: #8B5CF6;
   --accent-pink: #EC4899;
-  --accent-blue: #3B82F6;
-  --accent-gradient: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #3B82F6 100%);
-  --accent-gradient-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(59, 130, 246, 0.08) 100%);
+  --accent-cyan: #06B6D4;
+  --accent-amber: #F59E0B;
+  --accent-gradient: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #06B6D4 100%);
+  --accent-gradient-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(236, 72, 153, 0.05) 50%, rgba(6, 182, 212, 0.08) 100%);
 
   /* Status Colors */
   --status-success: #10B981;
@@ -48,10 +52,10 @@
 }
 
 .dark {
-  /* Color Palette - Dark Mode (Default) */
+  /* Color Palette - Dark Neon Mode (Default Theme) */
   --bg-page: #0B0F19;
   --bg-surface: #111827;
-  --bg-surface-elevated: #1F2937;
+  --bg-surface-elevated: #1a2234;
   --bg-glass: rgba(17, 24, 39, 0.85);
 
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -61,14 +65,15 @@
   --text-primary: #F9FAFB;
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
-  --text-inverse: #0F172A;
+  --text-inverse: #0B0F19;
 
   /* Brand Accents */
   --accent-violet: #A78BFA;
   --accent-pink: #F472B6;
-  --accent-blue: #60A5FA;
-  --accent-gradient: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #3B82F6 100%);
-  --accent-gradient-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(59, 130, 246, 0.15) 100%);
+  --accent-cyan: #22D3EE;
+  --accent-amber: #FBBF24;
+  --accent-gradient: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #06B6D4 100%);
+  --accent-gradient-subtle: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.1) 50%, rgba(6, 182, 212, 0.15) 100%);
 
   /* Status Colors */
   --status-success: #34D399;
@@ -80,7 +85,7 @@
   --focus-ring: rgba(167, 139, 250, 0.5);
   --glow-subtle: 0 4px 20px -2px rgba(139, 92, 246, 0.2);
   --glow-primary: 0 0 30px -4px rgba(139, 92, 246, 0.35);
-  --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 2px 8px -2px rgba(0, 0, 0, 0.3);
+  --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.4);
 
   color-scheme: dark;
 }
@@ -91,15 +96,19 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-page);
   color: var(--text-primary);
   min-height: 100vh;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Space Grotesk for Headings */
+h1, h2, h3, h4, .font-heading {
+  font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.025em;
 }
 
 /* Selection Color */
@@ -121,6 +130,89 @@ body {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* ==========================================================================
+   DARK NEON STICKER UTILITIES
+   ========================================================================== */
+
+/* Dark Glass Panel */
+.neon-glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+}
+
+/* Sticker Hover Lift & Glow */
+.sticker-card {
+  border-radius: 24px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease;
+}
+
+.sticker-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 12px 35px -8px rgba(139, 92, 246, 0.15), 0 4px 12px -2px rgba(0, 0, 0, 0.4);
+}
+
+/* Sticker Chip Base */
+.sticker-chip {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.sticker-chip:active {
+  transform: scale(0.96);
+}
+
+/* Animated Gradient Text */
+.gradient-text-neon {
+  background: linear-gradient(135deg, #A78BFA 0%, #F472B6 45%, #22D3EE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle Animated Background Blobs */
+.neon-blob-violet {
+  position: absolute;
+  filter: blur(100px);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0) 70%);
+  pointer-events: none;
+  border-radius: 9999px;
+}
+
+.neon-blob-pink {
+  position: absolute;
+  filter: blur(100px);
+  background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(236, 72, 153, 0) 70%);
+  pointer-events: none;
+  border-radius: 9999px;
+}
+
+.neon-blob-cyan {
+  position: absolute;
+  filter: blur(100px);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, rgba(6, 182, 212, 0) 70%);
+  pointer-events: none;
+  border-radius: 9999px;
 }
 
 /* ==========================================================================
@@ -152,7 +244,7 @@ body {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.18);
+    transform: scale(1.22);
   }
   100% {
     transform: scale(1);
@@ -161,6 +253,19 @@ body {
 
 .animate-pop {
   animation: pop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes bounce-sm {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.animate-bounce-sm {
+  animation: bounce-sm 0.3s ease;
 }
 
 /* ==========================================================================
@@ -176,5 +281,11 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .sticker-card:hover {
+    transform: none !important;
+  }
+  .sticker-chip:active {
+    transform: none !important;
   }
 }

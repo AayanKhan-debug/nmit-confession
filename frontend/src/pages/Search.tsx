@@ -7,43 +7,25 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Clock,
-  FileQuestion
+  FileQuestion,
+  Sparkles
 } from 'lucide-react';
 
 import {
-  Badge,
   Input,
   Button,
   SkeletonCard,
   EmptyState,
   ErrorState
 } from '../components/ui';
-
-const CATEGORIES = [
-  { value: 'All', label: 'All Categories' },
-  { value: 'CAMPUS_LIFE', label: 'Campus Life' },
-  { value: 'ADVICE', label: 'Advice' },
-  { value: 'RANT', label: 'Rant' },
-  { value: 'FUNNY', label: 'Funny' },
-  { value: 'CRUSH', label: 'Crushes' },
-  { value: 'OTHER', label: 'Other Topics' }
-];
-
-const CATEGORY_BADGE_VARIANTS: Record<string, { variant: 'violet' | 'pink' | 'blue' | 'success' | 'warning' | 'default'; label: string; emoji: string }> = {
-  CAMPUS_LIFE: { variant: 'blue', label: 'Campus Life', emoji: '🏫' },
-  ADVICE: { variant: 'success', label: 'Advice', emoji: '💡' },
-  RANT: { variant: 'pink', label: 'Rant', emoji: '🗣️' },
-  FUNNY: { variant: 'warning', label: 'Funny', emoji: '😂' },
-  CRUSH: { variant: 'pink', label: 'Crush', emoji: '💖' },
-  OTHER: { variant: 'default', label: 'Other', emoji: '🔮' },
-};
+import ConfessionCard from '../components/ConfessionCard';
+import { ALL_CATEGORY_KEYS } from '../utils/categoryTheme';
 
 export default function Search() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const queryParam = searchParams.get('q') || '';
-  const categoryParam = searchParams.get('category') || 'All';
+  const categoryParam = searchParams.get('category') || 'ALL';
   const pageParam = parseInt(searchParams.get('page') || '0', 10);
 
   const [inputQuery, setInputQuery] = useState(queryParam);
@@ -72,7 +54,7 @@ export default function Search() {
     setHasSearched(true);
 
     try {
-      const cat = category === 'All' ? undefined : category;
+      const cat = category === 'ALL' ? undefined : category;
       const res = await searchConfessions(q, page, 20, cat);
       setConfessions(res.data.content);
       setTotalPages(res.data.totalPages);
@@ -102,7 +84,7 @@ export default function Search() {
 
   const handleClear = () => {
     setInputQuery('');
-    setInputCategory('All');
+    setInputCategory('ALL');
     setSearchParams({});
     setConfessions([]);
     setHasSearched(false);
@@ -118,32 +100,29 @@ export default function Search() {
     });
   };
 
-  const calculateTotalReactions = (c: Confession) => {
-    const r = c.reactions || {};
-    return (r.LOVE ?? c.reactionLoveCount ?? 0) +
-           (r.FUNNY ?? c.reactionFunnyCount ?? 0) +
-           (r.SAD ?? c.reactionSadCount ?? 0) +
-           (r.FIRE ?? c.reactionFireCount ?? 0);
-  };
-
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Search Header Banner */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs relative overflow-hidden">
-        <div className="space-y-2 mb-6">
-          <Badge variant="blue" dot size="sm">
-            Campus Archive Search
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-primary)]">
+      <section className="rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-cyan-500/20 via-violet-500/10 to-transparent rounded-full blur-2xl pointer-events-none -mr-12 -mt-12" />
+
+        <div className="relative z-10 space-y-3 mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 text-xs font-bold tracking-wide uppercase select-none shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Campus Archive Search</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-heading">
             Search Confessions
           </h1>
-          <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
-            Explore past campus confessions by keywords, topics, exams, hostels, or professors.
+          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+            Search across all approved confessions by keywords, topics, exams, hostel rants, or professors.
           </p>
         </div>
 
-        {/* Search Input Form */}
-        <form onSubmit={handleSearchSubmit} className="space-y-3">
+        {/* Large Obvious Search Input Form */}
+        <form onSubmit={handleSearchSubmit} className="space-y-3 relative z-10">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Input
@@ -153,20 +132,20 @@ export default function Search() {
                 onChange={(e) => setInputQuery(e.target.value)}
                 placeholder="Search keywords, topics, hostel rants..."
                 maxLength={100}
-                leftIcon={<SearchIcon className="w-4 h-4 text-[var(--text-muted)]" />}
+                leftIcon={<SearchIcon className="w-4 h-4 text-cyan-400" />}
                 rightIcon={
                   inputQuery ? (
                     <button
                       type="button"
                       onClick={handleClear}
                       aria-label="Clear search input"
-                      className="p-1 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
+                      className="p-1 rounded-lg text-slate-400 hover:text-white cursor-pointer"
                     >
                       <X className="w-4 h-4" />
                     </button>
                   ) : null
                 }
-                className="w-full"
+                className="w-full text-base"
               />
             </div>
 
@@ -185,10 +164,12 @@ export default function Search() {
                     });
                   }
                 }}
-                className="min-h-[44px] px-3.5 py-2 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-xs font-semibold text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer"
+                className="min-h-[44px] px-4 py-2.5 rounded-2xl bg-[#111827] border border-white/15 text-xs font-bold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 cursor-pointer"
               >
-                {CATEGORIES.map(cat => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
+                {ALL_CATEGORY_KEYS.map(cat => (
+                  <option key={cat} value={cat}>
+                    {cat === 'ALL' ? 'All Categories' : cat.replace('_', ' ')}
+                  </option>
                 ))}
               </select>
 
@@ -208,18 +189,18 @@ export default function Search() {
 
       {/* Results Header Meta */}
       {hasSearched && (
-        <div className="flex items-center justify-between text-xs text-[var(--text-secondary)] px-2">
+        <div className="flex items-center justify-between text-xs text-slate-300 px-2 font-medium">
           <span>
-            Results for: <strong className="text-[var(--text-primary)]">"{queryParam}"</strong>
+            Results for: <strong className="text-white">"{queryParam}"</strong>
             {typeof totalElements === 'number' && (
-              <span className="ml-1 text-[var(--text-muted)]">({totalElements} found)</span>
+              <span className="ml-1 text-slate-400">({totalElements} found)</span>
             )}
           </span>
 
-          {categoryParam !== 'All' && (
-            <Badge variant="violet" size="sm">
+          {categoryParam !== 'ALL' && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 text-[11px] font-bold">
               Category: {categoryParam.replace('_', ' ')}
-            </Badge>
+            </span>
           )}
         </div>
       )}
@@ -240,54 +221,20 @@ export default function Search() {
             />
           ) : confessions.length === 0 ? (
             <EmptyState
-              icon={<FileQuestion className="w-8 h-8 text-[var(--text-muted)]" />}
-              title="No matching confessions found"
+              icon={<FileQuestion className="w-8 h-8 text-cyan-400" />}
+              title="No confessions found"
               description="No confessions matched your search keywords. Try searching for different terms or switch to 'All Categories'."
-              actionLabel="Clear Filters"
+              actionLabel="Clear Search"
               onAction={handleClear}
             />
           ) : (
-            <div className="space-y-4">
-              {confessions.map((c) => {
-                const badgeMeta = CATEGORY_BADGE_VARIANTS[c.category] || CATEGORY_BADGE_VARIANTS.OTHER;
-                const totalRx = calculateTotalReactions(c);
-                return (
-                  <article
-                    key={c.id}
-                    className="p-6 sm:p-7 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs hover:border-[var(--border-focus)] transition-all duration-200"
-                  >
-                    <div className="flex items-center justify-between mb-3.5">
-                      <Badge variant={badgeMeta.variant} size="sm">
-                        <span className="mr-1">{badgeMeta.emoji}</span>
-                        <span>{badgeMeta.label}</span>
-                      </Badge>
-                      <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                        <Clock className="w-3.5 h-3.5" />
-                        <span>
-                          {new Date(c.createdAt).toLocaleDateString(undefined, {
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </span>
-                      </div>
-                    </div>
-
-                    {c.title && (
-                      <h2 className="text-lg font-bold tracking-tight text-[var(--text-primary)] mb-2.5 leading-snug">
-                        {c.title}
-                      </h2>
-                    )}
-
-                    <p className="text-[var(--text-secondary)] whitespace-pre-wrap text-sm sm:text-base leading-relaxed mb-4">
-                      {c.content}
-                    </p>
-
-                    <div className="pt-3 border-t border-[var(--border-subtle)] flex items-center justify-between text-xs text-[var(--text-muted)]">
-                      <span>{totalRx} community reactions</span>
-                    </div>
-                  </article>
-                );
-              })}
+            <div className="space-y-5">
+              {confessions.map((c) => (
+                <ConfessionCard
+                  key={c.id}
+                  confession={c}
+                />
+              ))}
             </div>
           )}
 
@@ -295,7 +242,7 @@ export default function Search() {
           {!loading && totalPages > 1 && (
             <nav
               aria-label="Search pagination"
-              className="flex items-center justify-between p-4 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs mt-6"
+              className="flex items-center justify-between p-4 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 shadow-lg mt-6"
             >
               <Button
                 variant="secondary"
@@ -307,9 +254,9 @@ export default function Search() {
                 Previous
               </Button>
 
-              <span className="text-xs font-medium text-[var(--text-secondary)]">
-                Page <strong className="text-[var(--text-primary)]">{pageParam + 1}</strong> of{' '}
-                <strong className="text-[var(--text-primary)]">{totalPages}</strong>
+              <span className="text-xs font-semibold text-slate-300">
+                Page <strong className="text-white">{pageParam + 1}</strong> of{' '}
+                <strong className="text-white">{totalPages}</strong>
               </span>
 
               <Button

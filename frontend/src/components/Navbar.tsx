@@ -67,44 +67,44 @@ export default function Navbar() {
   };
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `inline-flex items-center px-3 py-1.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${
+    `min-h-[44px] inline-flex items-center px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all duration-150 whitespace-nowrap shrink-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
       isActive
-        ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400 font-semibold'
-        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
+        ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40 shadow-sm shadow-violet-500/20 font-bold'
+        : 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
     }`;
 
   const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center space-x-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+    `min-h-[44px] flex items-center space-x-3 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-all ${
       isActive
-        ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400 font-semibold'
-        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
+        ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40 font-bold'
+        : 'text-slate-300 hover:text-white hover:bg-white/5'
     }`;
 
   return (
-    <header className="sticky top-0 z-50 bg-[var(--bg-surface)]/90 backdrop-blur-md border-b border-[var(--border-subtle)] text-[var(--text-primary)] shadow-xs transition-colors duration-200">
+    <header className="sticky top-0 z-50 bg-[#0B0F19]/85 backdrop-blur-md border-b border-white/10 text-slate-100 shadow-md transition-colors duration-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
+        <div className="flex items-center justify-between h-18">
+          {/* Brand Logo with Neon Sticker Style */}
           <Link
             to="/"
             onClick={closeMenu}
-            className="flex items-center space-x-2.5 group focus:outline-none focus:ring-2 focus:ring-violet-500 rounded-xl p-1 shrink-0"
+            className="flex items-center space-x-3 group focus:outline-none focus:ring-2 focus:ring-violet-400 rounded-2xl p-1.5 shrink-0"
           >
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-500/20 group-hover:scale-105 transition-transform shrink-0">
-              <Sparkles size={20} className="fill-white/20" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-violet-600 via-pink-600 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-violet-500/30 group-hover:scale-105 group-hover:rotate-1 transition-transform shrink-0 border border-white/20">
+              <Sparkles size={22} className="fill-white/25" />
             </div>
             <div className="flex flex-col whitespace-nowrap shrink-0">
-              <span className="text-lg font-bold text-[var(--text-primary)] tracking-tight leading-none group-hover:text-violet-500 transition-colors">
+              <span className="text-lg font-black tracking-tight leading-none text-white group-hover:text-violet-400 transition-colors font-heading">
                 NMIT Confessions
               </span>
-              <span className="text-[10px] text-[var(--text-muted)] font-medium tracking-wide uppercase mt-0.5">
+              <span className="text-[10px] text-slate-400 font-bold tracking-wider uppercase mt-1">
                 Anonymous Campus Voice
               </span>
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-1" aria-label="Main Navigation">
+          {/* Desktop Navigation Links (Sticker Pills) */}
+          <nav className="hidden lg:flex items-center space-x-1.5" aria-label="Main Navigation">
             <NavLink to="/" end className={navLinkClass}>
               Feed
             </NavLink>
@@ -125,8 +125,8 @@ export default function Navbar() {
             {user && (
               <>
                 {/* Full inline admin navigation at xl (1280px+) */}
-                <div className="hidden xl:flex items-center space-x-1 pl-3 ml-2 border-l border-[var(--border-subtle)] shrink-0">
-                  <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md px-1.5 py-0.5 mr-1 whitespace-nowrap shrink-0">
+                <div className="hidden xl:flex items-center space-x-1.5 pl-3 ml-2 border-l border-white/10 shrink-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded-full px-2.5 py-1 mr-1 whitespace-nowrap shrink-0">
                     {user.role}
                   </span>
                   <NavLink to="/admin/dashboard" className={navLinkClass}>
@@ -144,83 +144,82 @@ export default function Navbar() {
                 </div>
 
                 {/* Compact admin dropdown navigation at lg (1024px-1279px) */}
-                <div className="flex xl:hidden pl-2.5 ml-1 border-l border-[var(--border-subtle)] relative shrink-0" ref={adminDropdownRef}>
+                <div className="flex xl:hidden pl-2.5 ml-1 border-l border-white/10 relative shrink-0" ref={adminDropdownRef}>
                   <button
                     type="button"
                     onClick={() => setIsAdminDropdownOpen(prev => !prev)}
                     aria-expanded={isAdminDropdownOpen}
                     aria-haspopup="true"
-                    className={`inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    className={`min-h-[44px] inline-flex items-center space-x-2 px-3 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap shrink-0 cursor-pointer ${
                       isAdminActive
-                        ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
-                        : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)]'
+                        ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40'
+                        : 'text-slate-300 hover:text-white hover:bg-white/5 border border-transparent'
                     }`}
                   >
-                    <ShieldAlert size={14} className="text-amber-500" />
+                    <ShieldAlert size={15} className="text-amber-400" />
                     <span>Admin</span>
-                    <span className="text-[10px] font-bold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded px-1.5 py-0.5">
+                    <span className="text-[10px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full px-2 py-0.5">
                       {user.role}
                     </span>
                     <ChevronDown size={14} className={`transition-transform duration-150 ${isAdminDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
 
-
                   {isAdminDropdownOpen && (
                     <div
-                      className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-[var(--bg-surface)] shadow-xl border border-[var(--border-subtle)] py-2 z-50 animate-in fade-in zoom-in-95 duration-100"
+                      className="absolute right-0 top-full mt-2 w-52 rounded-2xl bg-[#111827] shadow-2xl border border-white/15 py-2 z-50 animate-in fade-in zoom-in-95 duration-100"
                       role="menu"
                     >
                       <Link
                         to="/admin/dashboard"
                         onClick={() => setIsAdminDropdownOpen(false)}
-                        className={`flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
+                        className={`min-h-[44px] flex items-center space-x-2.5 px-3.5 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
                           location.pathname === '/admin/dashboard'
-                            ? 'bg-violet-500/10 text-violet-600 dark:text-violet-400'
-                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
+                            ? 'bg-violet-500/20 text-violet-300'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`}
                         role="menuitem"
                       >
-                        <LayoutDashboard size={14} className="text-violet-500" />
+                        <LayoutDashboard size={15} className="text-violet-400" />
                         <span>Dashboard</span>
                       </Link>
                       <Link
                         to="/admin/moderation"
                         onClick={() => setIsAdminDropdownOpen(false)}
-                        className={`flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
+                        className={`min-h-[44px] flex items-center space-x-2.5 px-3.5 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
                           location.pathname === '/admin/moderation'
-                            ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
+                            ? 'bg-amber-500/20 text-amber-300'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`}
                         role="menuitem"
                       >
-                        <ShieldAlert size={14} className="text-amber-500" />
+                        <ShieldAlert size={15} className="text-amber-400" />
                         <span>Mod Queue</span>
                       </Link>
                       <Link
                         to="/admin/reports"
                         onClick={() => setIsAdminDropdownOpen(false)}
-                        className={`flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
+                        className={`min-h-[44px] flex items-center space-x-2.5 px-3.5 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
                           location.pathname === '/admin/reports'
-                            ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
+                            ? 'bg-rose-500/20 text-rose-300'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`}
                         role="menuitem"
                       >
-                        <AlertTriangle size={14} className="text-rose-500" />
+                        <AlertTriangle size={15} className="text-rose-400" />
                         <span>Reports</span>
                       </Link>
                       <Link
                         to="/admin/hidden"
                         onClick={() => setIsAdminDropdownOpen(false)}
-                        className={`flex items-center space-x-2 px-3 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
+                        className={`min-h-[44px] flex items-center space-x-2.5 px-3.5 py-2 text-xs font-semibold rounded-xl mx-1.5 transition-colors ${
                           location.pathname === '/admin/hidden'
-                            ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400'
-                            : 'text-[var(--text-secondary)] hover:bg-[var(--bg-surface-elevated)] hover:text-[var(--text-primary)]'
+                            ? 'bg-purple-500/20 text-purple-300'
+                            : 'text-slate-300 hover:bg-white/5 hover:text-white'
                         }`}
                         role="menuitem"
                       >
-                        <EyeOff size={14} className="text-purple-500" />
-                        <span>Hidden Confessions</span>
+                        <EyeOff size={15} className="text-purple-400" />
+                        <span>Hidden Queue</span>
                       </Link>
                     </div>
                   )}
@@ -229,55 +228,58 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Desktop Right Actions */}
-          <div className="hidden lg:flex items-center space-x-2 sm:space-x-3 shrink-0">
+          {/* Desktop Right Actions: Theme + Floating Confess CTA */}
+          <div className="hidden lg:flex items-center space-x-2.5 shrink-0">
             <ThemeToggle />
 
+            {/* Floating Sticker Confess Button */}
             <Link
               to="/submit"
-              className="inline-flex items-center space-x-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 active:scale-95 shadow-sm shadow-violet-500/25 transition-all whitespace-nowrap shrink-0"
+              className="min-h-[44px] inline-flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-black text-white bg-gradient-to-r from-violet-600 via-pink-600 to-indigo-600 hover:from-violet-500 hover:via-pink-500 hover:to-indigo-500 active:scale-95 shadow-md shadow-violet-600/30 hover:shadow-lg hover:shadow-violet-600/40 border border-white/20 transition-all duration-150 whitespace-nowrap shrink-0 cursor-pointer"
             >
               <MessageSquarePlus size={16} />
-              <span className="hidden xl:inline">Confess Anonymously</span>
-              <span className="xl:hidden">Confess</span>
+              <span className="hidden xl:inline tracking-wide">Confess Anonymously</span>
+              <span className="xl:hidden tracking-wide">Confess</span>
             </Link>
 
             {user ? (
               <button
+                type="button"
                 onClick={handleLogout}
-                className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-medium text-rose-600 hover:text-rose-700 hover:bg-rose-500/10 focus:outline-none focus:ring-2 focus:ring-rose-400 transition-colors whitespace-nowrap shrink-0"
+                className="min-h-[44px] inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-full text-xs font-bold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 focus:outline-none focus:ring-2 focus:ring-rose-400 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
                 title="Logout admin session"
               >
-                <LogOut size={16} />
+                <LogOut size={15} />
                 <span>Logout</span>
               </button>
             ) : (
               <Link
                 to="/admin/login"
-                className="text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] px-2.5 py-1.5 rounded-xl transition-colors flex items-center space-x-1 whitespace-nowrap shrink-0"
+                className="min-h-[44px] text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-full transition-colors flex items-center space-x-1.5 whitespace-nowrap shrink-0"
                 title="Staff login"
               >
-                <Shield size={13} />
+                <Shield size={14} className="text-violet-400" />
                 <span>Staff</span>
               </Link>
             )}
           </div>
 
-          {/* Mobile Hamburger Button */}
+          {/* Mobile Hamburger & Actions */}
           <div className="flex items-center space-x-2 lg:hidden">
             <ThemeToggle />
 
             <Link
               to="/submit"
-              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-violet-600 to-indigo-600 active:scale-95"
+              className="min-h-[44px] inline-flex items-center px-4 py-2 rounded-full text-xs font-bold text-white bg-gradient-to-r from-violet-600 to-pink-600 active:scale-95 shadow-sm shadow-violet-500/25 border border-white/20"
             >
-              <MessageSquarePlus size={14} className="mr-1" />
+              <MessageSquarePlus size={14} className="mr-1.5" />
               <span>Submit</span>
             </Link>
 
             <button
+              type="button"
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-xl text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface-elevated)] focus:outline-none focus:ring-2 focus:ring-violet-500"
+              className="min-h-[44px] min-w-[44px] p-2.5 rounded-2xl text-slate-300 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-violet-400 flex items-center justify-center cursor-pointer"
               aria-expanded={isOpen}
               aria-label="Toggle Navigation Menu"
             >
@@ -289,78 +291,79 @@ export default function Navbar() {
 
       {/* Mobile Drawer Menu */}
       {isOpen && (
-        <div className="lg:hidden border-b border-[var(--border-subtle)] bg-[var(--bg-surface)] px-4 pt-2 pb-6 space-y-3 shadow-lg animate-in slide-in-from-top-2 duration-150">
+        <div className="lg:hidden border-b border-white/10 bg-[#111827]/95 backdrop-blur-xl px-4 pt-2 pb-6 space-y-3 shadow-2xl animate-in slide-in-from-top-2 duration-150">
           <div className="space-y-1">
             <NavLink to="/" end onClick={closeMenu} className={mobileNavLinkClass}>
               <span>Public Feed</span>
             </NavLink>
             <NavLink to="/daily" onClick={closeMenu} className={mobileNavLinkClass}>
-              <Calendar size={16} className="text-violet-500" />
+              <Calendar size={16} className="text-violet-400" />
               <span>Confession of the Day</span>
             </NavLink>
             <NavLink to="/trending" onClick={closeMenu} className={mobileNavLinkClass}>
-              <Flame size={16} className="text-pink-500" />
+              <Flame size={16} className="text-pink-400" />
               <span>Trending Confessions</span>
             </NavLink>
             <NavLink to="/search" onClick={closeMenu} className={mobileNavLinkClass}>
-              <Search size={16} className="text-sky-500" />
+              <Search size={16} className="text-cyan-400" />
               <span>Search Database</span>
             </NavLink>
             <NavLink to="/archives" onClick={closeMenu} className={mobileNavLinkClass}>
-              <Archive size={16} className="text-[var(--text-muted)]" />
+              <Archive size={16} className="text-slate-400" />
               <span>Historical Archives</span>
             </NavLink>
           </div>
 
-          {/* Theme switcher row on mobile */}
-          <div className="pt-2 px-1 flex items-center justify-between border-t border-[var(--border-subtle)]">
-            <span className="text-xs font-semibold text-[var(--text-secondary)]">Theme</span>
+          {/* Theme switcher on mobile */}
+          <div className="pt-2 px-1 flex items-center justify-between border-t border-white/10">
+            <span className="text-xs font-semibold text-slate-400">Theme</span>
             <ThemeToggle variant="segmented" />
           </div>
 
           {/* Mobile Admin Section */}
           {user ? (
-            <div className="pt-3 border-t border-[var(--border-subtle)] space-y-1">
+            <div className="pt-3 border-t border-white/10 space-y-1">
               <div className="px-3 py-1 flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--text-muted)]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Moderator Space
                 </span>
-                <span className="text-[10px] font-bold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md px-1.5 py-0.5">
+                <span className="text-[10px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full px-2 py-0.5">
                   {user.role} ({user.username})
                 </span>
               </div>
               <NavLink to="/admin/dashboard" onClick={closeMenu} className={mobileNavLinkClass}>
-                <LayoutDashboard size={16} className="text-violet-500" />
+                <LayoutDashboard size={16} className="text-violet-400" />
                 <span>Dashboard</span>
               </NavLink>
               <NavLink to="/admin/moderation" onClick={closeMenu} className={mobileNavLinkClass}>
-                <ShieldAlert size={16} className="text-amber-500" />
+                <ShieldAlert size={16} className="text-amber-400" />
                 <span>Mod Queue</span>
               </NavLink>
               <NavLink to="/admin/reports" onClick={closeMenu} className={mobileNavLinkClass}>
-                <AlertTriangle size={16} className="text-rose-500" />
+                <AlertTriangle size={16} className="text-rose-400" />
                 <span>Reports</span>
               </NavLink>
               <NavLink to="/admin/hidden" onClick={closeMenu} className={mobileNavLinkClass}>
-                <EyeOff size={16} className="text-purple-500" />
+                <EyeOff size={16} className="text-purple-400" />
                 <span>Hidden Confessions</span>
               </NavLink>
               <button
+                type="button"
                 onClick={handleLogout}
-                className="w-full flex items-center space-x-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-600 hover:bg-rose-500/10 text-left cursor-pointer"
+                className="w-full min-h-[44px] flex items-center space-x-3 px-4 py-2.5 rounded-2xl text-sm font-semibold text-rose-400 hover:bg-rose-500/10 text-left cursor-pointer"
               >
                 <LogOut size={16} />
                 <span>Sign Out ({user.username})</span>
               </button>
             </div>
           ) : (
-            <div className="pt-2 border-t border-[var(--border-subtle)]">
+            <div className="pt-2 border-t border-white/10">
               <Link
                 to="/admin/login"
                 onClick={closeMenu}
-                className="flex items-center space-x-2 px-3 py-2 text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)] rounded-xl"
+                className="min-h-[44px] flex items-center space-x-2 px-3 py-2 text-xs font-semibold text-slate-400 hover:text-white rounded-xl"
               >
-                <Shield size={14} />
+                <Shield size={14} className="text-violet-400" />
                 <span>Staff & Moderator Portal</span>
               </Link>
             </div>

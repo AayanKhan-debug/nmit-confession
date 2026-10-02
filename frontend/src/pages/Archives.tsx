@@ -5,26 +5,16 @@ import {
   ChevronLeft,
   ChevronRight,
   Archive as ArchiveIcon,
-  Clock,
   Inbox
 } from 'lucide-react';
 
 import {
-  Badge,
   Button,
   SkeletonCard,
   EmptyState,
   ErrorState
 } from '../components/ui';
-
-const CATEGORY_BADGE_VARIANTS: Record<string, { variant: 'violet' | 'pink' | 'blue' | 'success' | 'warning' | 'default'; label: string; emoji: string }> = {
-  CAMPUS_LIFE: { variant: 'blue', label: 'Campus Life', emoji: '🏫' },
-  ADVICE: { variant: 'success', label: 'Advice', emoji: '💡' },
-  RANT: { variant: 'pink', label: 'Rant', emoji: '🗣️' },
-  FUNNY: { variant: 'warning', label: 'Funny', emoji: '😂' },
-  CRUSH: { variant: 'pink', label: 'Crush', emoji: '💖' },
-  OTHER: { variant: 'default', label: 'Other', emoji: '🔮' },
-};
+import ConfessionCard from '../components/ConfessionCard';
 
 export default function Archives() {
   const [viewType, setViewType] = useState<'day' | 'week' | 'month'>('day');
@@ -117,26 +107,28 @@ export default function Archives() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      {/* Archives Header */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs relative overflow-hidden">
-        <div className="space-y-2 mb-6">
-          <Badge variant="violet" dot size="sm">
-            <span className="flex items-center gap-1">
-              <ArchiveIcon className="w-3.5 h-3.5 text-violet-500" />
-              <span>Historical Records</span>
-            </span>
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-primary)]">
+      {/* Archives Header Banner */}
+      <section className="rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-purple-500/20 via-violet-500/10 to-transparent rounded-full blur-2xl pointer-events-none -mr-12 -mt-12" />
+
+        <div className="relative z-10 space-y-3 mb-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-bold tracking-wide uppercase select-none shadow-sm">
+            <ArchiveIcon className="w-3.5 h-3.5 text-purple-400" />
+            <span>Time Capsule</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-heading">
             Campus Archives
           </h1>
-          <p className="text-xs sm:text-sm text-[var(--text-secondary)]">
-            Look back at confessions sorted by calendar day, academic week, or month.
+          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+            Travel back in time through past confessions organized by calendar day, academic week, or month.
           </p>
         </div>
 
         {/* Period Selector Tabs & Controls */}
-        <div className="space-y-4">
-          <div className="inline-flex p-1 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)]">
+        <div className="space-y-4 relative z-10">
+          <div className="inline-flex p-1.5 rounded-2xl bg-[#0B0F19]/80 border border-white/10">
             {(['day', 'week', 'month'] as const).map((type) => (
               <button
                 key={type}
@@ -146,10 +138,10 @@ export default function Archives() {
                   setPage(0);
                   setCurrentDate(new Date());
                 }}
-                className={`min-h-[40px] px-5 py-1.5 rounded-xl text-xs font-semibold capitalize transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 ${
+                className={`min-h-[44px] px-5 py-2 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 ${
                   viewType === type
-                    ? 'bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm font-bold border border-[var(--border-subtle)]'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)]'
+                    ? 'bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/30'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 {type}
@@ -157,8 +149,8 @@ export default function Archives() {
             ))}
           </div>
 
-          {/* Date Bar */}
-          <div className="flex items-center justify-between pt-3 border-t border-[var(--border-subtle)]">
+          {/* Date Navigation Bar */}
+          <div className="flex items-center justify-between pt-4 border-t border-white/10">
             <Button
               variant="secondary"
               size="sm"
@@ -168,7 +160,7 @@ export default function Archives() {
               Previous
             </Button>
 
-            <span className="font-bold text-sm sm:text-base text-[var(--text-primary)] text-center px-2">
+            <span className="font-extrabold text-sm sm:text-base text-white text-center px-2 font-heading tracking-wide">
               {viewType === 'day' &&
                 currentDate.toLocaleDateString(undefined, {
                   weekday: 'short',
@@ -176,7 +168,7 @@ export default function Archives() {
                   month: 'short',
                   day: 'numeric'
                 })}
-              {viewType === 'week' && `Week ${week} · ${isoYear}`}
+              {viewType === 'week' && `Academic Week ${week} · ${isoYear}`}
               {viewType === 'month' &&
                 currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
             </span>
@@ -209,48 +201,18 @@ export default function Archives() {
           />
         ) : confessions.length === 0 ? (
           <EmptyState
-            icon={<Inbox className="w-8 h-8 text-[var(--text-muted)]" />}
-            title="No confessions found for this period"
-            description="The selected day, week, or month has no stored confessions. Use the navigation buttons above to travel to an active period."
+            icon={<Inbox className="w-8 h-8 text-purple-400" />}
+            title="No confessions recorded for this period"
+            description="The selected day, week, or month has no stored confessions. Use the navigation buttons above to travel to an active date."
           />
         ) : (
-          <div className="space-y-4">
-            {confessions.map((c) => {
-              const badgeMeta = CATEGORY_BADGE_VARIANTS[c.category] || CATEGORY_BADGE_VARIANTS.OTHER;
-              return (
-                <article
-                  key={c.id}
-                  className="p-6 sm:p-7 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs hover:border-[var(--border-focus)] transition-all duration-200"
-                >
-                  <div className="flex items-center justify-between mb-3.5">
-                    <Badge variant={badgeMeta.variant} size="sm">
-                      <span className="mr-1">{badgeMeta.emoji}</span>
-                      <span>{badgeMeta.label}</span>
-                    </Badge>
-
-                    <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>
-                        {new Date(c.createdAt).toLocaleDateString(undefined, {
-                          month: 'short',
-                          day: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                  </div>
-
-                  {c.title && (
-                    <h2 className="text-lg font-bold tracking-tight text-[var(--text-primary)] mb-2.5 leading-snug">
-                      {c.title}
-                    </h2>
-                  )}
-
-                  <p className="text-[var(--text-secondary)] whitespace-pre-wrap text-sm sm:text-base leading-relaxed">
-                    {c.content}
-                  </p>
-                </article>
-              );
-            })}
+          <div className="space-y-5">
+            {confessions.map((c) => (
+              <ConfessionCard
+                key={c.id}
+                confession={c}
+              />
+            ))}
           </div>
         )}
 
@@ -258,7 +220,7 @@ export default function Archives() {
         {!loading && totalPages > 1 && (
           <nav
             aria-label="Archives pagination"
-            className="flex items-center justify-between p-4 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs mt-6"
+            className="flex items-center justify-between p-4 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 shadow-lg mt-6"
           >
             <Button
               variant="secondary"
@@ -270,9 +232,9 @@ export default function Archives() {
               Previous
             </Button>
 
-            <span className="text-xs font-medium text-[var(--text-secondary)]">
-              Page <strong className="text-[var(--text-primary)]">{page + 1}</strong> of{' '}
-              <strong className="text-[var(--text-primary)]">{totalPages}</strong>
+            <span className="text-xs font-semibold text-slate-300">
+              Page <strong className="text-white">{page + 1}</strong> of{' '}
+              <strong className="text-white">{totalPages}</strong>
             </span>
 
             <Button

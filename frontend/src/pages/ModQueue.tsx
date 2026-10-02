@@ -17,7 +17,6 @@ import {
   EyeOff
 } from 'lucide-react';
 import {
-  Badge,
   Button,
   Modal,
   Toast,
@@ -93,7 +92,6 @@ export default function ModQueue() {
   }, [searchParams]);
 
   const handleApply = (e: FormEvent) => {
-
     e.preventDefault();
     const params = new URLSearchParams();
     if (status) params.set('status', status);
@@ -138,7 +136,6 @@ export default function ModQueue() {
 
   const handleCloseReject = () => {
     setRejectingId(null);
-    // Restore focus to triggering button
     setTimeout(() => {
       rejectTriggerRef.current?.focus();
     }, 50);
@@ -195,20 +192,16 @@ export default function ModQueue() {
       )}
 
       {/* Header Banner */}
-      <section className="p-5 sm:p-7 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <section className="p-6 sm:p-7 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 shadow-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Badge variant="warning" dot size="sm">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Operational Worklist</span>
-              </span>
-            </Badge>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider select-none">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>Operational Worklist</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[var(--text-primary)]">
+          <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white font-heading">
             Moderation Queue
           </h1>
-          <p className="text-xs text-[var(--text-secondary)]">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium">
             Review pending submissions, inspect automated screening flags, and take decisive actions.
           </p>
         </div>
@@ -217,41 +210,41 @@ export default function ModQueue() {
         <div className="flex items-center gap-2 shrink-0">
           <Link
             to="/admin/dashboard"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors min-h-[40px]"
+            className="min-h-[44px] inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1a2234] border border-white/10 text-slate-300 hover:text-white hover:bg-white/5 transition-colors"
           >
-            <LayoutDashboard className="w-3.5 h-3.5 text-violet-500" />
+            <LayoutDashboard className="w-3.5 h-3.5 text-violet-400" />
             <span>Dashboard</span>
           </Link>
           <Link
             to="/admin/reports"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-rose-500 transition-colors min-h-[40px]"
+            className="min-h-[44px] inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1a2234] border border-white/10 text-slate-300 hover:text-rose-400 hover:bg-white/5 transition-colors"
           >
-            <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-400" />
             <span>Reports</span>
           </Link>
           <Link
             to="/admin/hidden"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-purple-500 transition-colors min-h-[40px]"
+            className="min-h-[44px] inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1a2234] border border-white/10 text-slate-300 hover:text-purple-400 hover:bg-white/5 transition-colors"
           >
-            <EyeOff className="w-3.5 h-3.5 text-purple-500" />
+            <EyeOff className="w-3.5 h-3.5 text-purple-400" />
             <span>Hidden</span>
           </Link>
         </div>
       </section>
 
       {/* Dense Filter Toolbar */}
-      <section className="p-5 rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs">
+      <section className="p-5 sm:p-6 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 shadow-xl">
         <form onSubmit={handleApply} className="space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 text-xs">
             <div>
-              <label htmlFor="status" className="block mb-1 font-bold uppercase tracking-wider text-[11px] text-[var(--text-secondary)]">
+              <label htmlFor="status" className="block mb-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-300">
                 Status
               </label>
               <select
                 id="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer min-h-[40px]"
+                className="w-full p-2.5 rounded-xl bg-[#0B0F19] border border-white/15 font-semibold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 cursor-pointer min-h-[44px]"
               >
                 <option value="PENDING">PENDING</option>
                 <option value="HIDDEN">HIDDEN</option>
@@ -259,14 +252,14 @@ export default function ModQueue() {
             </div>
 
             <div>
-              <label htmlFor="category" className="block mb-1 font-bold uppercase tracking-wider text-[11px] text-[var(--text-secondary)]">
+              <label htmlFor="category" className="block mb-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-300">
                 Category
               </label>
               <select
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer min-h-[40px]"
+                className="w-full p-2.5 rounded-xl bg-[#0B0F19] border border-white/15 font-semibold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 cursor-pointer min-h-[44px]"
               >
                 <option value="">All Categories</option>
                 <option value="CAMPUS_LIFE">Campus Life</option>
@@ -279,14 +272,14 @@ export default function ModQueue() {
             </div>
 
             <div>
-              <label htmlFor="flag" className="block mb-1 font-bold uppercase tracking-wider text-[11px] text-[var(--text-secondary)]">
+              <label htmlFor="flag" className="block mb-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-300">
                 Screening Flag
               </label>
               <select
                 id="flag"
                 value={flag}
                 onChange={(e) => setFlag(e.target.value)}
-                className="w-full p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer min-h-[40px]"
+                className="w-full p-2.5 rounded-xl bg-[#0B0F19] border border-white/15 font-semibold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 cursor-pointer min-h-[44px]"
               >
                 <option value="">All Flags</option>
                 <option value="PERSONAL_INFORMATION">Personal Info</option>
@@ -298,14 +291,14 @@ export default function ModQueue() {
             </div>
 
             <div>
-              <label htmlFor="sort" className="block mb-1 font-bold uppercase tracking-wider text-[11px] text-[var(--text-secondary)]">
+              <label htmlFor="sort" className="block mb-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-300">
                 Order
               </label>
               <select
                 id="sort"
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}
-                className="w-full p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer min-h-[40px]"
+                className="w-full p-2.5 rounded-xl bg-[#0B0F19] border border-white/15 font-semibold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 cursor-pointer min-h-[44px]"
               >
                 <option value="priority">Priority Flagged</option>
                 <option value="newest">Newest First</option>
@@ -314,7 +307,7 @@ export default function ModQueue() {
             </div>
 
             <div>
-              <label htmlFor="from" className="block mb-1 font-bold uppercase tracking-wider text-[11px] text-[var(--text-secondary)]">
+              <label htmlFor="from" className="block mb-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-300">
                 From Date
               </label>
               <input
@@ -322,12 +315,12 @@ export default function ModQueue() {
                 type="date"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="w-full p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 min-h-[40px]"
+                className="w-full p-2.5 rounded-xl bg-[#0B0F19] border border-white/15 font-semibold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 min-h-[44px]"
               />
             </div>
 
             <div>
-              <label htmlFor="to" className="block mb-1 font-bold uppercase tracking-wider text-[11px] text-[var(--text-secondary)]">
+              <label htmlFor="to" className="block mb-1.5 font-bold uppercase tracking-wider text-[11px] text-slate-300">
                 To Date
               </label>
               <input
@@ -335,12 +328,12 @@ export default function ModQueue() {
                 type="date"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="w-full p-2 rounded-xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 min-h-[40px]"
+                className="w-full p-2.5 rounded-xl bg-[#0B0F19] border border-white/15 font-semibold text-slate-200 focus:outline-none focus:ring-2 focus:ring-violet-400 min-h-[44px]"
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-3 border-t border-[var(--border-subtle)]">
+          <div className="flex items-center justify-between pt-3 border-t border-white/10">
             <div className="flex items-center gap-2">
               <Button
                 type="submit"
@@ -360,8 +353,8 @@ export default function ModQueue() {
               </Button>
             </div>
 
-            <span className="text-xs text-[var(--text-muted)] font-medium">
-              Showing <strong className="text-[var(--text-primary)]">{confessions.length}</strong> of {totalElements} items
+            <span className="text-xs text-slate-400 font-medium">
+              Showing <strong className="text-white">{confessions.length}</strong> of {totalElements} items
             </span>
           </div>
         </form>
@@ -370,8 +363,8 @@ export default function ModQueue() {
       {/* Queue Stream */}
       {loading ? (
         <div className="space-y-4">
-          <Skeleton className="h-40 w-full rounded-2xl" />
-          <Skeleton className="h-40 w-full rounded-2xl" />
+          <Skeleton className="h-44 w-full rounded-[24px]" />
+          <Skeleton className="h-44 w-full rounded-[24px]" />
         </div>
       ) : error ? (
         <ErrorState
@@ -381,7 +374,7 @@ export default function ModQueue() {
         />
       ) : confessions.length === 0 ? (
         <EmptyState
-          icon={<ShieldCheck className="w-8 h-8 text-emerald-500" />}
+          icon={<ShieldCheck className="w-8 h-8 text-emerald-400" />}
           title="Queue is completely clear"
           description="There are currently zero confessions requiring moderation under the selected filters."
         />
@@ -396,27 +389,29 @@ export default function ModQueue() {
             return (
               <article
                 key={c.id}
-                className={`p-5 sm:p-6 rounded-2xl bg-[var(--bg-surface)] border transition-all ${
+                className={`p-5 sm:p-6 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border transition-all ${
                   hasFlags || hasReports
-                    ? 'border-l-4 border-l-rose-500 border-[var(--border-subtle)]'
-                    : 'border-[var(--border-subtle)]'
+                    ? 'border-l-4 border-l-rose-500 border-white/10'
+                    : 'border-white/10'
                 }`}
               >
                 {/* Meta Header */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3 text-xs">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-[var(--text-muted)]">#{c.id}</span>
-                    <Badge variant={isPending ? 'warning' : 'violet'} size="sm">
+                    <span className="font-mono font-bold text-slate-400">#{c.id}</span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider ${
+                      isPending ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                    }`}>
                       {c.status}
-                    </Badge>
-                    <Badge variant="default" size="sm">
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-white/5 text-slate-300 border border-white/10 text-[11px] font-semibold">
                       {c.category.replace('_', ' ')}
-                    </Badge>
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-[var(--text-muted)]">
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-3 text-xs text-slate-400">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
                       <span>{new Date(c.createdAt).toLocaleString(undefined, {
                         month: 'short',
                         day: 'numeric',
@@ -426,26 +421,24 @@ export default function ModQueue() {
                     </div>
 
                     {hasReports && (
-                      <Badge variant="danger" size="sm">
-                        <span className="flex items-center gap-1 font-bold">
-                          <AlertTriangle className="w-3 h-3" />
-                          <span>{c.reportCount} report{c.reportCount === 1 ? '' : 's'}</span>
-                        </span>
-                      </Badge>
+                      <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold text-[11px] flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3 text-rose-400" />
+                        <span>{c.reportCount} report{c.reportCount === 1 ? '' : 's'}</span>
+                      </span>
                     )}
                   </div>
                 </div>
 
                 {/* Screening Flags */}
                 {hasFlags && (
-                  <div className="mb-3 p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 flex flex-wrap items-center gap-1.5 text-xs text-rose-600 dark:text-rose-400">
-                    <Flag className="w-3.5 h-3.5 shrink-0" />
+                  <div className="mb-3 p-3 rounded-2xl bg-rose-500/10 border border-rose-500/25 flex flex-wrap items-center gap-2 text-xs text-rose-300">
+                    <Flag className="w-3.5 h-3.5 shrink-0 text-rose-400" />
                     <span className="font-bold text-[11px] uppercase tracking-wider mr-1">Automated Flags:</span>
                     {c.screeningFlags!.map((f) => (
                       <span
                         key={f}
                         title={c.flagExplanations?.[f] || f}
-                        className="px-2 py-0.5 rounded-md bg-[var(--bg-surface)] border border-rose-500/30 font-semibold text-[11px] text-rose-600 dark:text-rose-400"
+                        className="px-2.5 py-0.5 rounded-full bg-[#111827] border border-rose-500/40 font-semibold text-[11px] text-rose-300"
                       >
                         {f.replace('_', ' ')}
                       </span>
@@ -455,16 +448,16 @@ export default function ModQueue() {
 
                 {/* Confession Title & Content */}
                 {c.title && (
-                  <h3 className="text-base font-bold text-[var(--text-primary)] mb-1.5 tracking-tight">
+                  <h3 className="text-base font-bold text-white mb-2 tracking-tight font-heading">
                     {c.title}
                   </h3>
                 )}
-                <p className="text-[var(--text-secondary)] whitespace-pre-wrap text-sm leading-relaxed mb-4">
+                <p className="text-slate-200 whitespace-pre-wrap text-sm leading-relaxed mb-4 break-words">
                   {c.content}
                 </p>
 
                 {/* Moderation Actions Bar */}
-                <div className="flex flex-wrap items-center justify-end gap-2 pt-3 border-t border-[var(--border-subtle)]">
+                <div className="flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-white/10">
                   {isPending && (
                     <Button
                       variant="primary"
@@ -472,7 +465,7 @@ export default function ModQueue() {
                       disabled={actionLoadingId === c.id}
                       isLoading={actionLoadingId === c.id}
                       onClick={() => handleApprove(c.id)}
-                      leftIcon={<Check className="w-3.5 h-3.5" />}
+                      leftIcon={<Check className="w-4 h-4" />}
                     >
                       Approve to Feed
                     </Button>
@@ -483,7 +476,7 @@ export default function ModQueue() {
                     size="sm"
                     disabled={actionLoadingId === c.id}
                     onClick={(e) => handleOpenReject(c.id, e)}
-                    leftIcon={<X className="w-3.5 h-3.5" />}
+                    leftIcon={<X className="w-4 h-4" />}
                   >
                     Reject
                   </Button>
@@ -494,7 +487,7 @@ export default function ModQueue() {
                       size="sm"
                       disabled={actionLoadingId === c.id}
                       onClick={() => handleRestore(c.id)}
-                      leftIcon={<RotateCcw className="w-3.5 h-3.5" />}
+                      leftIcon={<RotateCcw className="w-4 h-4" />}
                     >
                       Restore to Feed
                     </Button>
@@ -510,7 +503,7 @@ export default function ModQueue() {
       {!loading && totalPages > 1 && (
         <nav
           aria-label="Moderation worklist pagination"
-          className="flex items-center justify-between p-4 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs"
+          className="flex items-center justify-between p-4 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 shadow-lg"
         >
           <Button
             variant="secondary"
@@ -522,9 +515,9 @@ export default function ModQueue() {
             Previous
           </Button>
 
-          <span className="text-xs font-medium text-[var(--text-secondary)]">
-            Page <strong className="text-[var(--text-primary)]">{page + 1}</strong> of{' '}
-            <strong className="text-[var(--text-primary)]">{totalPages}</strong>
+          <span className="text-xs font-semibold text-slate-300">
+            Page <strong className="text-white">{page + 1}</strong> of{' '}
+            <strong className="text-white">{totalPages}</strong>
           </span>
 
           <Button
@@ -566,7 +559,7 @@ export default function ModQueue() {
         }
       >
         <div className="space-y-3">
-          <label htmlFor="rejectReason" className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+          <label htmlFor="rejectReason" className="block text-xs font-bold uppercase tracking-wider text-slate-300">
             Rejection Justification
           </label>
           <input
@@ -576,7 +569,7 @@ export default function ModQueue() {
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
             placeholder="Audit log reason (e.g. Harassment, Doxxing)..."
-            className="w-full px-4 py-2.5 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-sm font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-rose-500"
+            className="w-full px-4 py-3 rounded-2xl bg-[#111827] border border-white/15 text-sm font-semibold text-slate-100 focus:outline-none focus:ring-2 focus:ring-rose-500 min-h-[44px]"
           />
         </div>
       </Modal>

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../api';
 import type { Confession, PageResponse } from '../types';
 import {
-  Heart,
-  Smile,
-  Frown,
-  Flame,
-  AlertTriangle,
-  Clock,
+  MessageSquareOff,
   ChevronLeft,
   ChevronRight,
-  MessageSquareOff
+  MessageSquarePlus,
+  Flame,
+  Calendar,
+  Sparkles
 } from 'lucide-react';
 
 import {
-  Badge,
   CategoryChip,
   Modal,
   SkeletonCard,
@@ -23,15 +21,8 @@ import {
   Toast,
   Button
 } from '../components/ui';
-
-const CATEGORY_BADGE_VARIANTS: Record<string, { variant: 'violet' | 'pink' | 'blue' | 'success' | 'warning' | 'default'; label: string; emoji: string }> = {
-  CAMPUS_LIFE: { variant: 'blue', label: 'Campus Life', emoji: '🏫' },
-  ADVICE: { variant: 'success', label: 'Advice', emoji: '💡' },
-  RANT: { variant: 'pink', label: 'Rant', emoji: '🗣️' },
-  FUNNY: { variant: 'warning', label: 'Funny', emoji: '😂' },
-  CRUSH: { variant: 'pink', label: 'Crush', emoji: '💖' },
-  OTHER: { variant: 'default', label: 'Other', emoji: '🔮' },
-};
+import ConfessionCard from '../components/ConfessionCard';
+import { ALL_CATEGORY_KEYS } from '../utils/categoryTheme';
 
 export default function Home() {
   const [confessions, setConfessions] = useState<Confession[]>([]);
@@ -39,7 +30,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   // Notification toast state
   const [toast, setToast] = useState<{ type: 'success' | 'error' | 'info'; title?: string; message: string } | null>(null);
@@ -55,7 +46,7 @@ export default function Home() {
     setToast({ message, type, title });
     setTimeout(() => {
       setToast(prev => (prev?.message === message ? null : prev));
-    }, 4500);
+    }, 4000);
   };
 
   const fetchConfessions = async () => {
@@ -79,22 +70,39 @@ export default function Home() {
     fetchConfessions();
   }, [page, selectedCategory]);
 
-  const getReactionCount = (c: Confession, type: 'LOVE' | 'FUNNY' | 'SAD' | 'FIRE') => {
-    const r = c.reactions || {};
-    return r[type] ?? (c as any)[`reaction${type.charAt(0) + type.slice(1).toLowerCase()}Count`] ?? 0;
+  // User's reacted confessions map: confessionId -> reactionType
+  const [reactedConfessions, setReactedConfessions] = useState<Record<number, 'LOVE' | 'FUNNY' | 'SAD' | 'FIRE'>>(() => {
+    try {
+      const saved = sessionStorage.getItem('nmit_reacted_confessions');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  const recordReactionState = (id: number, type: 'LOVE' | 'FUNNY' | 'SAD' | 'FIRE') => {
+    setReactedConfessions(prev => {
+      const updated = { ...prev, [id]: type };
+      try {
+        sessionStorage.setItem('nmit_reacted_confessions', JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
   };
 
   const handleReaction = async (id: number, type: 'LOVE' | 'FUNNY' | 'SAD' | 'FIRE') => {
-    if (reactingId) return;
+    if (reactingId || reactedConfessions[id]) return;
     setReactingId(id);
     setActiveReactionKey(`${id}-${type}`);
     try {
       await api.post(`/confessions/${id}/reactions`, { type });
+      recordReactionState(id, type);
       showToast('Your reaction was recorded!', 'success');
       await fetchConfessions();
     } catch (err: any) {
       if (err.response?.status === 409) {
-        showToast('You have already reacted to this confession.', 'info');
+        recordReactionState(id, type);
+        showToast("You've already reacted to this confession.", 'info');
       } else {
         showToast('Unable to react right now. Please try again.', 'error');
       }
@@ -129,8 +137,6 @@ export default function Home() {
     }
   };
 
-  const categoriesList = ['ALL', 'CAMPUS_LIFE', 'ADVICE', 'RANT', 'FUNNY', 'CRUSH', 'OTHER'];
-
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       {/* Toast Notification Container */}
@@ -145,26 +151,63 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Header Card */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-violet-500/10 via-pink-500/5 to-transparent rounded-bl-full pointer-events-none -mr-10 -mt-10" />
+      {/* Hero Section: Dark Neon Sticker Campus Hero */}
+      <section className="rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+        {/* Subtle background glow blobs */}
+        <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-violet-600/20 via-pink-600/10 to-transparent rounded-full blur-2xl pointer-events-none -mr-16 -mt-16" />
+        <div className="absolute bottom-0 left-0 w-60 h-60 bg-gradient-to-tr from-cyan-600/15 via-transparent to-transparent rounded-full blur-2xl pointer-events-none -ml-12 -mb-12" />
 
-        <div className="relative z-10 space-y-2">
-          <Badge variant="violet" dot size="sm">
-            Campus Confessions
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-primary)]">
-            Community Feed
+        <div className="relative z-10 space-y-4">
+          {/* Sticker Pill Tag */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300 text-xs font-bold tracking-wide uppercase shadow-sm select-none">
+            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+            <span>NMIT Campus Confidential</span>
+          </div>
+
+          {/* Hero Typography */}
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white font-heading leading-tight">
+            Say it.{' '}
+            <span className="gradient-text-neon drop-shadow-sm">
+              Stay anonymous.
+            </span>
           </h1>
-          <p className="text-xs sm:text-sm text-[var(--text-secondary)] leading-relaxed max-w-xl">
-            Real campus thoughts, advice, hostelite rants, and unspoken stories. 100% anonymous &amp; community moderated.
+
+          <p className="text-sm sm:text-base text-slate-300 font-medium leading-relaxed max-w-xl">
+            Your campus. Your thoughts. No names attached. Drop your stories, hostel rants, crushes, and unspoken confessions freely.
           </p>
+
+          {/* Quick Actions Bar */}
+          <div className="pt-2 flex flex-wrap items-center gap-3">
+            <Link
+              to="/submit"
+              className="min-h-[44px] inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-extrabold text-white bg-gradient-to-r from-violet-600 via-pink-600 to-indigo-600 hover:from-violet-500 hover:via-pink-500 hover:to-indigo-500 active:scale-95 shadow-lg shadow-violet-600/35 hover:shadow-violet-600/50 border border-white/25 transition-all duration-150 cursor-pointer"
+            >
+              <MessageSquarePlus className="w-4 h-4" />
+              <span>Drop a Confession</span>
+            </Link>
+
+            <Link
+              to="/trending"
+              className="min-h-[44px] inline-flex items-center gap-2 px-4.5 py-2.5 rounded-full text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-150 cursor-pointer"
+            >
+              <Flame className="w-4 h-4 text-pink-400" />
+              <span>Trending</span>
+            </Link>
+
+            <Link
+              to="/daily"
+              className="min-h-[44px] inline-flex items-center gap-2 px-4.5 py-2.5 rounded-full text-xs font-bold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-150 cursor-pointer"
+            >
+              <Calendar className="w-4 h-4 text-amber-400" />
+              <span>Daily Pick</span>
+            </Link>
+          </div>
         </div>
 
-        {/* Category Filter Chips Carousel */}
-        <div className="mt-6 pt-5 border-t border-[var(--border-subtle)]">
+        {/* Category Sticker Chips Carousel Filter */}
+        <div className="mt-8 pt-6 border-t border-white/10 relative z-10">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
-            {categoriesList.map(cat => (
+            {ALL_CATEGORY_KEYS.map(cat => (
               <CategoryChip
                 key={cat}
                 categoryKey={cat}
@@ -179,7 +222,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Error state */}
+      {/* Error State */}
       {error && !loading && (
         <ErrorState
           title="Could not load feed"
@@ -200,12 +243,12 @@ export default function Home() {
       {/* Empty State */}
       {!loading && !error && confessions.length === 0 && (
         <EmptyState
-          icon={<MessageSquareOff className="w-8 h-8" />}
-          title="Silence in the corridors..."
+          icon={<MessageSquareOff className="w-8 h-8 text-violet-400" />}
+          title="Nothing here yet 👀"
           description={
             selectedCategory !== 'ALL'
-              ? `No approved confessions found in the "${selectedCategory.replace('_', ' ')}" category yet.`
-              : 'No confessions published yet. Be the first to break the silence!'
+              ? `No approved confessions found in "${selectedCategory.replace('_', ' ')}" yet. Be the first to drop one!`
+              : 'Be the first to drop a confession on campus.'
           }
           actionLabel="Drop a Confession"
           onAction={() => { window.location.href = '/submit'; }}
@@ -215,128 +258,18 @@ export default function Home() {
       {/* Confessions Stream */}
       {!loading && !error && confessions.length > 0 && (
         <div className="space-y-5">
-          {confessions.map((c) => {
-            const badgeMeta = CATEGORY_BADGE_VARIANTS[c.category] || CATEGORY_BADGE_VARIANTS.OTHER;
-            return (
-              <article
-                key={c.id}
-                className="p-6 sm:p-7 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs hover:border-[var(--border-focus)] transition-all duration-200"
-              >
-                {/* Meta Top: Category Pill & Timestamp (NO author persona) */}
-                <div className="flex items-center justify-between mb-3.5">
-                  <Badge variant={badgeMeta.variant} size="sm">
-                    <span className="mr-1">{badgeMeta.emoji}</span>
-                    <span>{badgeMeta.label}</span>
-                  </Badge>
-
-                  <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-                    <Clock className="w-3.5 h-3.5 shrink-0" />
-                    <time dateTime={c.createdAt}>
-                      {new Date(c.createdAt).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </time>
-                  </div>
-                </div>
-
-                {/* Confession Title */}
-                {c.title && (
-                  <h2 className="text-lg sm:text-xl font-bold tracking-tight text-[var(--text-primary)] mb-2.5 leading-snug">
-                    {c.title}
-                  </h2>
-                )}
-
-                {/* Confession Body */}
-                <p className="text-[var(--text-secondary)] whitespace-pre-wrap text-sm sm:text-base leading-relaxed mb-6">
-                  {c.content}
-                </p>
-
-                {/* Action Footer: Reactions & Report */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[var(--border-subtle)]">
-                  {/* Reaction Controls */}
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    {/* LOVE */}
-                    <button
-                      type="button"
-                      onClick={() => handleReaction(c.id, 'LOVE')}
-                      disabled={reactingId === c.id}
-                      aria-label={`React with Love (${getReactionCount(c, 'LOVE')})`}
-                      className={`group min-h-[40px] px-3 py-1.5 rounded-2xl text-xs font-semibold flex items-center gap-1.5 border transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 active:scale-95 disabled:opacity-50 ${
-                        activeReactionKey === `${c.id}-LOVE`
-                          ? 'bg-rose-500/20 border-rose-500/40 text-rose-500 font-bold scale-105'
-                          : 'bg-[var(--bg-surface-elevated)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-rose-500 hover:border-rose-500/30'
-                      }`}
-                    >
-                      <Heart className="w-3.5 h-3.5 text-rose-500 group-hover:scale-125 transition-transform motion-reduce:transform-none" />
-                      <span>{getReactionCount(c, 'LOVE')}</span>
-                    </button>
-
-                    {/* FUNNY */}
-                    <button
-                      type="button"
-                      onClick={() => handleReaction(c.id, 'FUNNY')}
-                      disabled={reactingId === c.id}
-                      aria-label={`React with Haha (${getReactionCount(c, 'FUNNY')})`}
-                      className={`group min-h-[40px] px-3 py-1.5 rounded-2xl text-xs font-semibold flex items-center gap-1.5 border transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 active:scale-95 disabled:opacity-50 ${
-                        activeReactionKey === `${c.id}-FUNNY`
-                          ? 'bg-amber-500/20 border-amber-500/40 text-amber-500 font-bold scale-105'
-                          : 'bg-[var(--bg-surface-elevated)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-amber-500 hover:border-amber-500/30'
-                      }`}
-                    >
-                      <Smile className="w-3.5 h-3.5 text-amber-500 group-hover:scale-125 transition-transform motion-reduce:transform-none" />
-                      <span>{getReactionCount(c, 'FUNNY')}</span>
-                    </button>
-
-                    {/* SAD */}
-                    <button
-                      type="button"
-                      onClick={() => handleReaction(c.id, 'SAD')}
-                      disabled={reactingId === c.id}
-                      aria-label={`React with Sad (${getReactionCount(c, 'SAD')})`}
-                      className={`group min-h-[40px] px-3 py-1.5 rounded-2xl text-xs font-semibold flex items-center gap-1.5 border transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 active:scale-95 disabled:opacity-50 ${
-                        activeReactionKey === `${c.id}-SAD`
-                          ? 'bg-sky-500/20 border-sky-500/40 text-sky-500 font-bold scale-105'
-                          : 'bg-[var(--bg-surface-elevated)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-sky-500 hover:border-sky-500/30'
-                      }`}
-                    >
-                      <Frown className="w-3.5 h-3.5 text-sky-500 group-hover:scale-125 transition-transform motion-reduce:transform-none" />
-                      <span>{getReactionCount(c, 'SAD')}</span>
-                    </button>
-
-                    {/* FIRE */}
-                    <button
-                      type="button"
-                      onClick={() => handleReaction(c.id, 'FIRE')}
-                      disabled={reactingId === c.id}
-                      aria-label={`React with Fire (${getReactionCount(c, 'FIRE')})`}
-                      className={`group min-h-[40px] px-3 py-1.5 rounded-2xl text-xs font-semibold flex items-center gap-1.5 border transition-all duration-150 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 active:scale-95 disabled:opacity-50 ${
-                        activeReactionKey === `${c.id}-FIRE`
-                          ? 'bg-orange-500/20 border-orange-500/40 text-orange-500 font-bold scale-105'
-                          : 'bg-[var(--bg-surface-elevated)] border-[var(--border-subtle)] text-[var(--text-secondary)] hover:text-orange-500 hover:border-orange-500/30'
-                      }`}
-                    >
-                      <Flame className="w-3.5 h-3.5 text-orange-500 group-hover:scale-125 transition-transform motion-reduce:transform-none" />
-                      <span>{getReactionCount(c, 'FIRE')}</span>
-                    </button>
-                  </div>
-
-                  {/* Report Button */}
-                  <button
-                    type="button"
-                    onClick={() => handleOpenReport(c.id)}
-                    aria-label="Report this confession"
-                    className="min-h-[40px] inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-medium text-[var(--text-muted)] hover:text-rose-500 hover:bg-rose-500/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 cursor-pointer"
-                  >
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    <span>Report</span>
-                  </button>
-                </div>
-              </article>
-            );
-          })}
+          {confessions.map((c) => (
+            <ConfessionCard
+              key={c.id}
+              confession={c}
+              onReaction={handleReaction}
+              onReport={handleOpenReport}
+              isReacting={reactingId === c.id}
+              activeReactionKey={activeReactionKey}
+              userReaction={reactedConfessions[c.id]}
+              hasReacted={!!reactedConfessions[c.id]}
+            />
+          ))}
         </div>
       )}
 
@@ -344,7 +277,7 @@ export default function Home() {
       {!loading && totalPages > 1 && (
         <nav
           aria-label="Pagination"
-          className="flex items-center justify-between p-4 rounded-3xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] shadow-xs"
+          className="flex items-center justify-between p-4 rounded-[24px] bg-[#111827]/85 backdrop-blur-md border border-white/10 shadow-lg"
         >
           <Button
             variant="secondary"
@@ -356,9 +289,9 @@ export default function Home() {
             Previous
           </Button>
 
-          <span className="text-xs font-medium text-[var(--text-secondary)]">
-            Page <strong className="text-[var(--text-primary)]">{page + 1}</strong> of{' '}
-            <strong className="text-[var(--text-primary)]">{totalPages}</strong>
+          <span className="text-xs font-semibold text-slate-300">
+            Page <strong className="text-white">{page + 1}</strong> of{' '}
+            <strong className="text-white">{totalPages}</strong>
           </span>
 
           <Button
@@ -378,7 +311,7 @@ export default function Home() {
         isOpen={reportingId !== null}
         onClose={() => setReportingId(null)}
         title="Report Confession"
-        description="Help maintain a safe and respectful campus environment. Select a reason to flag this confession for moderation."
+        description="Help maintain a safe and respectful campus environment. Select a reason to flag this confession for staff review."
         footer={
           <>
             <Button
@@ -400,14 +333,14 @@ export default function Home() {
         }
       >
         <div className="space-y-4">
-          <label htmlFor="reportReason" className="block text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+          <label htmlFor="reportReason" className="block text-xs font-bold uppercase tracking-wider text-slate-300">
             Flag Reason
           </label>
           <select
             id="reportReason"
             value={reportReason}
             onChange={(e) => setReportReason(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-2xl bg-[var(--bg-surface-elevated)] border border-[var(--border-subtle)] text-sm font-medium text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-violet-500 cursor-pointer"
+            className="w-full px-4 py-3 rounded-2xl bg-[#111827] border border-white/15 text-sm font-semibold text-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-400 cursor-pointer min-h-[44px]"
           >
             <option value="SPAM">Spam or Irrelevant</option>
             <option value="HARASSMENT">Harassment or Bullying</option>
