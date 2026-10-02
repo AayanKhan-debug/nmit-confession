@@ -134,4 +134,21 @@ class ModerationActionTest {
         mockMvc.perform(post("/api/admin/moderation/confessions/" + pendingConfession.getId() + "/approve").with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    @WithMockUser(username = "mod1", roles = "MODERATOR")
+    void testModerationApproveFailsWithoutCsrfToken() throws Exception {
+        // Without CSRF token header/processor, mutating requests to moderation endpoints must return 403 Forbidden
+        mockMvc.perform(post("/api/admin/moderation/confessions/" + pendingConfession.getId() + "/approve"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(username = "mod1", roles = "MODERATOR")
+    void testModerationApproveSucceedsWithCsrfTokenHeader() throws Exception {
+        mockMvc.perform(post("/api/admin/moderation/confessions/" + pendingConfession.getId() + "/approve")
+                .with(org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf().asHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("PUBLISHED"));
+    }
 }

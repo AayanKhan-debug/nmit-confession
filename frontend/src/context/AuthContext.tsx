@@ -22,23 +22,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const refreshAuth = async () => {
+  const refreshAuth = async (): Promise<void> => {
     try {
       const res = await api.get<User>('/auth/me');
       setUser(res.data);
-    } catch {
+    } catch (err) {
       setUser(null);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    refreshAuth();
+    refreshAuth().catch(() => {
+      // Expected to fail when unauthenticated on initial page load
+    });
+
+    const handleUnauthorized = () => {
+      setUser(null);
+    };
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
   }, []);
 
   const login = async (username: string, password: string) => {
-    await api.post('/auth/login', { username, password });
+    const res = await api.post<{ username: string; role: any }>('/auth/login', { username, password });
+    if (res.data?.username && res.data?.role) {
+      setUser({ username: res.data.username, role: res.data.role });
+    }
     await refreshAuth();
   };
 

@@ -38,4 +38,18 @@ public class AuthController {
         authService.logout(request, response);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/csrf")
+    public ResponseEntity<Void> csrf(HttpServletRequest request, HttpServletResponse response) {
+        org.springframework.security.web.csrf.CsrfToken csrfToken =
+            (org.springframework.security.web.csrf.CsrfToken) request.getAttribute(org.springframework.security.web.csrf.CsrfToken.class.getName());
+        if (csrfToken != null) {
+            String token = csrfToken.getToken();
+            if (token != null && !token.isEmpty()) {
+                response.setHeader("X-XSRF-TOKEN", token);
+                response.setHeader("X-CSRF-TOKEN", token);
+            }
+        }
+        return ResponseEntity.noContent().build();
+    }
 }

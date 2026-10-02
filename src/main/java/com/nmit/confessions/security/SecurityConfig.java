@@ -42,9 +42,27 @@ public class SecurityConfig {
                 .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"))
             )
             .csrf(csrf -> {
-                org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler requestHandler = new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler();
+                CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                tokenRepository.setCookieCustomizer(cookie -> cookie
+                    .sameSite("None")
+                    .secure(true)
+                    .path("/")
+                );
+                org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler requestHandler = new org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler() {
+                    @Override
+                    public String resolveCsrfTokenValue(jakarta.servlet.http.HttpServletRequest request, org.springframework.security.web.csrf.CsrfToken csrfToken) {
+                        String token = request.getHeader("X-XSRF-TOKEN");
+                        if (token == null || token.isEmpty()) {
+                            token = request.getHeader("X-CSRF-TOKEN");
+                        }
+                        if (token == null || token.isEmpty()) {
+                            token = super.resolveCsrfTokenValue(request, csrfToken);
+                        }
+                        return token;
+                    }
+                };
                 requestHandler.setCsrfRequestAttributeName(null);
-                csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                csrf.csrfTokenRepository(tokenRepository)
                     .csrfTokenRequestHandler(requestHandler)
                     .ignoringRequestMatchers("/api/auth/login", "/api/auth/logout", "/api/confessions", "/api/confessions/**", "/api/confessions/*/reports");
             })
@@ -53,7 +71,11 @@ public class SecurityConfig {
                 protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, java.io.IOException {
                     org.springframework.security.web.csrf.CsrfToken csrfToken = (org.springframework.security.web.csrf.CsrfToken) request.getAttribute(org.springframework.security.web.csrf.CsrfToken.class.getName());
                     if (csrfToken != null) {
-                        csrfToken.getToken();
+                        String token = csrfToken.getToken();
+                        if (token != null && !token.isEmpty()) {
+                            response.setHeader("X-XSRF-TOKEN", token);
+                            response.setHeader("X-CSRF-TOKEN", token);
+                        }
                     }
                     filterChain.doFilter(request, response);
                 }
@@ -61,6 +83,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/auth/logout").permitAll()
+                .requestMatchers("/api/auth/csrf").permitAll()
                 .requestMatchers("/api/confessions", "/api/confessions/**", "/api/confessions/*/reports").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 .anyRequest().authenticated()
@@ -85,8 +108,8 @@ public class SecurityConfig {
             .toList();
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-XSRF-TOKEN", "Accept", "Origin", "X-Requested-With"));
-        configuration.setExposedHeaders(Arrays.asList("X-XSRF-TOKEN"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "X-XSRF-TOKEN", "X-CSRF-TOKEN", "Accept", "Origin", "X-Requested-With"));
+        configuration.setExposedHeaders(Arrays.asList("X-XSRF-TOKEN", "X-CSRF-TOKEN"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

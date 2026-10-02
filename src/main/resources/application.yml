@@ -22,5 +22,5 @@ server:
     session:
       cookie:
         http-only: true
-        secure: false # set true in prod
-        same-site: lax
+        secure: ${SESSION_COOKIE_SECURE:true}
+        same-site: ${SESSION_COOKIE_SAMESITE:none}

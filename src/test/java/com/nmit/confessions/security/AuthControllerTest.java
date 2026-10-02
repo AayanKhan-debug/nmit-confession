@@ -16,8 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -133,5 +135,18 @@ public class AuthControllerTest {
         mockMvc.perform(get("/api/auth/me")
                 .session(session))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testCsrfEndpointReturnsTokenAndExposesHeader() throws Exception {
+        MvcResult result = mockMvc.perform(get("/api/auth/csrf"))
+                .andExpect(status().isNoContent())
+                .andExpect(header().exists("X-XSRF-TOKEN"))
+                .andExpect(header().exists("X-CSRF-TOKEN"))
+                .andReturn();
+
+        String token = result.getResponse().getHeader("X-XSRF-TOKEN");
+        assertThat(token).isNotBlank();
+        assertThat(result.getResponse().getHeader("X-CSRF-TOKEN")).isEqualTo(token);
     }
 }
